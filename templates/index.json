@@ -19,7 +19,7 @@
         "btn_label": "Shop Now",
         "btn_url": "",
         "btn2_label": "View All Gear",
-        "btn2_url": "",
+        "btn2_url": "shopify://collections",
         "trust_1": "Free Shipping Over $100",
         "trust_2": "30-Day Easy Returns",
         "trust_3": "Secure Checkout",
