@@ -1,0 +1,72 @@
+{% comment %}
+  Product Card snippet
+  Usage: {% render 'product-card', product: product %}
+{% endcomment %}
+
+<div class="product-card">
+  <a href="{{ product.url }}" class="product-card__media" tabindex="-1" aria-hidden="true">
+    {% if product.featured_image %}
+      <img
+        class="product-card__img"
+        src="{{ product.featured_image | image_url: width: 600 }}"
+        alt="{{ product.featured_image.alt | escape | default: product.title }}"
+        width="600"
+        height="600"
+        loading="lazy"
+      >
+    {% else %}
+      <div class="product-card__img" style="background:#e8eef3; display:flex; align-items:center; justify-content:center;">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#7AAACE" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+      </div>
+    {% endif %}
+
+    <!-- Badges -->
+    <div class="product-card__badges">
+      {% render 'badge', product: product %}
+    </div>
+  </a>
+
+  <div class="product-card__body">
+    {% if product.vendor != blank %}
+      <div class="product-card__vendor">{{ product.vendor }}</div>
+    {% endif %}
+
+    <h3 class="product-card__title">
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </h3>
+
+    <div class="product-card__price">
+      {% if product.compare_at_price > product.price %}
+        <span class="product-card__price-current product-card__price-current--sale">
+          {{ product.price | money }}
+        </span>
+        <span class="product-card__price-compare">
+          {{ product.compare_at_price | money }}
+        </span>
+      {% else %}
+        <span class="product-card__price-current">
+          {{ product.price | money }}
+        </span>
+      {% endif %}
+    </div>
+
+    <div class="product-card__atc">
+      {% if product.available %}
+        <button
+          class="btn btn--primary btn--full btn--sm"
+          data-product-id="{{ product.variants.first.id }}"
+          data-atc
+        >
+          {{ 'products.product.add_to_cart' | t }}
+        </button>
+      {% else %}
+        <button class="btn btn--primary btn--full btn--sm" disabled>
+          {{ 'products.product.sold_out' | t }}
+        </button>
+      {% endif %}
+    </div>
+  </div>
+</div>

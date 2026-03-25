@@ -1,0 +1,25 @@
+{% comment %}
+  Badge snippet
+  Usage: {% render 'badge', product: product %}
+{% endcomment %}
+
+{% assign badge_label = blank %}
+{% assign badge_class = blank %}
+
+{% if product.available == false %}
+  {% assign badge_label = 'Sold Out' %}
+  {% assign badge_class = 'badge--soldout' %}
+{% elsif product.compare_at_price > product.price %}
+  {% assign badge_label = 'Sale' %}
+  {% assign badge_class = 'badge--sale' %}
+{% elsif product.tags contains 'best-seller' %}
+  {% assign badge_label = 'Best Seller' %}
+  {% assign badge_class = 'badge--best-seller' %}
+{% elsif product.tags contains 'new' %}
+  {% assign badge_label = 'New' %}
+  {% assign badge_class = 'badge--new' %}
+{% endif %}
+
+{% if badge_label != blank %}
+  <span class="badge {{ badge_class }}">{{ badge_label }}</span>
+{% endif %}

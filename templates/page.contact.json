@@ -1,0 +1,52 @@
+{
+  "sections": {
+    "main": {
+      "type": "contact-faq",
+      "blocks": {
+        "faq1": {
+          "type": "faq",
+          "settings": {
+            "question": "How long does shipping take?",
+            "answer": "<p>We ship worldwide. Domestic orders typically arrive within 3\u20137 business days. International orders take 7\u201321 business days depending on location.</p>"
+          }
+        },
+        "faq2": {
+          "type": "faq",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>We accept returns within 30 days of purchase on unused items in original packaging. Contact us to initiate a return.</p>"
+          }
+        },
+        "faq3": {
+          "type": "faq",
+          "settings": {
+            "question": "How do I choose the right glove size?",
+            "answer": "<p>Glove sizing is based on your body weight. Under 60kg: 10oz, 60\u201380kg: 12oz, 80kg+: 14\u201316oz.</p>"
+          }
+        },
+        "faq4": {
+          "type": "faq",
+          "settings": {
+            "question": "Do you offer discount codes?",
+            "answer": "<p>Yes! Subscribe to our newsletter to receive exclusive discount codes. We also run seasonal sales.</p>"
+          }
+        },
+        "faq5": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I track my order?",
+            "answer": "<p>Yes. Once your order ships, you\u2019ll receive a tracking number by email. You can also view order status in your account.</p>"
+          }
+        }
+      },
+      "block_order": ["faq1", "faq2", "faq3", "faq4", "faq5"],
+      "settings": {
+        "heading": "Contact & FAQ",
+        "subheading": "We\u2019re here to help. Reach out or find your answer below.",
+        "email": "support@zeesboxinggear.com",
+        "response_time": "We typically respond within 24\u201348 hours, Monday\u2013Friday."
+      }
+    }
+  },
+  "order": ["main"]
+}

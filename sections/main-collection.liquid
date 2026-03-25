@@ -1,0 +1,93 @@
+<!-- Collection Header -->
+<div class="collection-header">
+  <div class="container">
+    <h1>{{ collection.title }}</h1>
+    {% if collection.description != blank %}
+      <p>{{ collection.description }}</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="container">
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ routes.root_url }}">Home</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">{{ collection.title }}</span>
+  </nav>
+
+  <!-- Toolbar -->
+  <div class="collection-toolbar">
+    <p class="collection-toolbar__count">
+      {{ collection.products_count }} product{% if collection.products_count != 1 %}s{% endif %}
+    </p>
+    <div class="collection-sort">
+      <select id="sort-by" name="sort_by" aria-label="Sort products">
+        <option value="manual"{% if collection.sort_by == 'manual' %} selected{% endif %}>Featured</option>
+        <option value="best-selling"{% if collection.sort_by == 'best-selling' %} selected{% endif %}>Best Selling</option>
+        <option value="title-ascending"{% if collection.sort_by == 'title-ascending' %} selected{% endif %}>A–Z</option>
+        <option value="title-descending"{% if collection.sort_by == 'title-descending' %} selected{% endif %}>Z–A</option>
+        <option value="price-ascending"{% if collection.sort_by == 'price-ascending' %} selected{% endif %}>Price: Low to High</option>
+        <option value="price-descending"{% if collection.sort_by == 'price-descending' %} selected{% endif %}>Price: High to Low</option>
+        <option value="created-descending"{% if collection.sort_by == 'created-descending' %} selected{% endif %}>Newest</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Product Grid -->
+  {% paginate collection.products by section.settings.products_per_page %}
+    {% if collection.products.size > 0 %}
+      <div class="product-grid">
+        {% for product in collection.products %}
+          {% render 'product-card', product: product %}
+        {% endfor %}
+      </div>
+
+      <!-- Pagination -->
+      {% if paginate.pages > 1 %}
+        <nav class="pagination" aria-label="Pagination" style="display:flex; justify-content:center; gap:0.5rem; padding:2.5rem 0;">
+          {% if paginate.previous %}
+            <a href="{{ paginate.previous.url }}" class="btn btn--secondary btn--sm">&larr; Prev</a>
+          {% endif %}
+          {% for part in paginate.parts %}
+            {% if part.is_link %}
+              <a href="{{ part.url }}" class="btn btn--secondary btn--sm">{{ part.title }}</a>
+            {% else %}
+              {% if part.title == paginate.current_page %}
+                <span class="btn btn--primary btn--sm" aria-current="page">{{ part.title }}</span>
+              {% else %}
+                <span class="btn btn--sm" style="opacity:0.4; cursor:default;">{{ part.title }}</span>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% if paginate.next %}
+            <a href="{{ paginate.next.url }}" class="btn btn--secondary btn--sm">Next &rarr;</a>
+          {% endif %}
+        </nav>
+      {% endif %}
+
+    {% else %}
+      <div style="text-align:center; padding:5rem 1rem; color:#888;">
+        <p style="font-size:1.1rem;">{{ 'products.general.no_products' | t }}</p>
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary mt-3">Browse All Products</a>
+      </div>
+    {% endif %}
+  {% endpaginate %}
+</div>
+
+{% schema %}
+{
+  "name": "Collection",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "label": "Products per page",
+      "default": 24
+    }
+  ]
+}
+{% endschema %}

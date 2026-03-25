@@ -1,0 +1,71 @@
+<section class="section section-gear-grid">
+  <div class="container">
+    <h2 class="section-title-plain">{{ section.settings.heading | default: "Shop By Gear Type" }}</h2>
+
+    <div class="gear-grid">
+      <!-- Large featured card (first block) -->
+      {% assign blocks = section.blocks | where: 'type', 'gear' %}
+      {% if blocks.size > 0 %}
+        {% assign featured = blocks[0] %}
+        <a href="{{ featured.settings.url | default: '#' }}" class="gear-card gear-card--large">
+          {% if featured.settings.image %}
+            <img src="{{ featured.settings.image | image_url: width: 900 }}" alt="{{ featured.settings.label }}" loading="lazy">
+          {% else %}
+            <div class="gear-card__placeholder"></div>
+          {% endif %}
+          <div class="gear-card__label">{{ featured.settings.label }}</div>
+        </a>
+
+        <!-- Right grid: remaining blocks -->
+        <div class="gear-grid__right">
+          {% for block in blocks %}
+            {% if forloop.index > 1 %}
+              <a href="{{ block.settings.url | default: '#' }}" class="gear-card gear-card--small" {{ block.shopify_attributes }}>
+                {% if block.settings.image %}
+                  <img src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.label }}" loading="lazy">
+                {% else %}
+                  <div class="gear-card__placeholder"></div>
+                {% endif %}
+                <div class="gear-card__label">{{ block.settings.label }}</div>
+              </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured Gear Grid",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Section Heading", "default": "Shop By Gear Type" }
+  ],
+  "blocks": [
+    {
+      "type": "gear",
+      "name": "Gear Card",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "label", "label": "Label", "default": "Boxing Gloves" },
+        { "type": "url", "id": "url", "label": "Link URL" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Gear Grid",
+      "blocks": [
+        { "type": "gear", "settings": { "label": "Boxing Gloves" } },
+        { "type": "gear", "settings": { "label": "Headgear" } },
+        { "type": "gear", "settings": { "label": "Body Protectors" } },
+        { "type": "gear", "settings": { "label": "Punching Bags" } },
+        { "type": "gear", "settings": { "label": "Hand Wraps" } },
+        { "type": "gear", "settings": { "label": "Skipping Ropes" } },
+        { "type": "gear", "settings": { "label": "Mouthguards" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

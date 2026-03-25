@@ -1,0 +1,180 @@
+{% assign current_variant = product.selected_or_first_available_variant %}
+
+<div class="container">
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ routes.root_url }}">Home</a>
+    <span>/</span>
+    {% if collection %}
+      <a href="{{ collection.url }}">{{ collection.title }}</a>
+      <span>/</span>
+    {% endif %}
+    <span aria-current="page">{{ product.title }}</span>
+  </nav>
+</div>
+
+<section class="product-page">
+  <div class="container">
+    <div class="product-page__inner">
+
+      <!-- Gallery -->
+      <div class="product-gallery">
+        <div class="product-gallery__main" id="gallery-main">
+          <img
+            id="gallery-main-img"
+            src="{{ product.featured_image | image_url: width: 900 }}"
+            alt="{{ product.featured_image.alt | escape | default: product.title }}"
+            width="900"
+            height="900"
+            loading="eager"
+          >
+        </div>
+        {% if product.images.size > 1 %}
+          <div class="product-gallery__thumbs" id="gallery-thumbs" role="list">
+            {% for image in product.images %}
+              <button
+                class="product-gallery__thumb{% if forloop.first %} is-active{% endif %}"
+                data-src="{{ image | image_url: width: 900 }}"
+                data-thumb-index="{{ forloop.index0 }}"
+                role="listitem"
+                aria-label="View image {{ forloop.index }}"
+              >
+                <img
+                  src="{{ image | image_url: width: 150 }}"
+                  alt="{{ image.alt | escape | default: product.title }}"
+                  width="72"
+                  height="72"
+                  loading="lazy"
+                >
+              </button>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Info -->
+      <div class="product-info">
+        {% if product.vendor != blank %}
+          <div class="product-info__vendor">{{ product.vendor }}</div>
+        {% endif %}
+
+        <h1 class="product-info__title">{{ product.title }}</h1>
+
+        <!-- Badges -->
+        <div style="margin-bottom:0.75rem;">
+          {% render 'badge', product: product %}
+        </div>
+
+        <!-- Price -->
+        <div class="product-info__price" id="product-price">
+          {% if current_variant.compare_at_price > current_variant.price %}
+            <span class="product-info__price-current product-info__price-current--sale">
+              {{ current_variant.price | money }}
+            </span>
+            <span class="product-info__price-compare">{{ current_variant.compare_at_price | money }}</span>
+          {% else %}
+            <span class="product-info__price-current" id="price-display">{{ current_variant.price | money }}</span>
+          {% endif %}
+        </div>
+
+        <div id="product-form-wrapper">
+          {% form 'product', product, id: 'product-form', data-product-form: '' %}
+            <input type="hidden" name="id" id="variant-id" value="{{ current_variant.id }}">
+
+            <!-- Variant Options -->
+            {% unless product.has_only_default_variant %}
+              {% for option in product.options_with_values %}
+                <div class="product-info__variants">
+                  <label class="variant-label">
+                    {{ option.name }}:
+                    <span id="option-selected-{{ forloop.index0 }}">{{ option.selected_value }}</span>
+                  </label>
+                  <div class="variant-options" data-option-index="{{ forloop.index0 }}">
+                    {% for value in option.values %}
+                      <button
+                        type="button"
+                        class="variant-btn{% if option.selected_value == value %} is-selected{% endif %}"
+                        data-value="{{ value }}"
+                        data-option="{{ forloop.parentloop.index0 }}"
+                        {% unless product.available %}disabled{% endunless %}
+                      >
+                        {{ value }}
+                      </button>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endfor %}
+            {% endunless %}
+
+            <!-- Quantity -->
+            <div class="product-info__qty">
+              <label class="variant-label" for="qty-input">Quantity</label>
+              <div class="qty-control">
+                <button type="button" id="qty-minus" aria-label="Decrease quantity">&#8722;</button>
+                <input
+                  type="number"
+                  id="qty-input"
+                  name="quantity"
+                  value="1"
+                  min="1"
+                  aria-label="Quantity"
+                >
+                <button type="button" id="qty-plus" aria-label="Increase quantity">&#43;</button>
+              </div>
+            </div>
+
+            <!-- Add to Cart -->
+            <div class="product-info__actions">
+              <button
+                type="submit"
+                class="btn btn--primary btn--lg"
+                id="atc-btn"
+                {% unless current_variant.available %}disabled{% endunless %}
+              >
+                {% if current_variant.available %}
+                  {{ 'products.product.add_to_cart' | t }}
+                {% else %}
+                  {{ 'products.product.sold_out' | t }}
+                {% endif %}
+              </button>
+            </div>
+
+          {% endform %}
+        </div>
+
+        <!-- Description -->
+        {% if product.description != blank %}
+          <div class="product-info__description">
+            {{ product.description }}
+          </div>
+        {% endif %}
+
+        <!-- Meta -->
+        <div class="product-info__meta">
+          {% if product.vendor != blank %}
+            <span><strong>Brand:</strong> {{ product.vendor }}</span>
+          {% endif %}
+          {% if current_variant.sku != blank %}
+            <span><strong>SKU:</strong> {{ current_variant.sku }}</span>
+          {% endif %}
+          <span><strong>Availability:</strong>
+            {% if current_variant.available %}In Stock{% else %}Out of Stock{% endif %}
+          </span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Product JSON for JS -->
+<script type="application/json" id="product-json">
+  {{ product | json }}
+</script>
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,61 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-banner",
+      "settings": {
+        "heading": "TRAIN LIKE A CHAMPION",
+        "subheading": "Premium boxing gear for fighters at every level.",
+        "btn_label": "Shop Now"
+      }
+    },
+    "categories": {
+      "type": "shop-by-category",
+      "blocks": {
+        "cat1": { "type": "category", "settings": { "label": "GLOVES" } },
+        "cat2": { "type": "category", "settings": { "label": "PROTECTIVE GEAR" } },
+        "cat3": { "type": "category", "settings": { "label": "TRAINING EQUIPMENT" } }
+      },
+      "block_order": ["cat1", "cat2", "cat3"],
+      "settings": { "heading": "Shop By Category" }
+    },
+    "activity": {
+      "type": "shop-by-activity",
+      "blocks": {
+        "act1": { "type": "activity", "settings": { "label": "Boxing Gloves" } },
+        "act2": { "type": "activity", "settings": { "label": "Sparring & Headgear" } },
+        "act3": { "type": "activity", "settings": { "label": "Heavy Bag Training" } },
+        "act4": { "type": "activity", "settings": { "label": "Speed & Cardio" } },
+        "act5": { "type": "activity", "settings": { "label": "Wraps & Recovery" } }
+      },
+      "block_order": ["act1", "act2", "act3", "act4", "act5"],
+      "settings": { "heading": "Shop By Activity" }
+    },
+    "gear_grid": {
+      "type": "featured-gear-grid",
+      "blocks": {
+        "g1": { "type": "gear", "settings": { "label": "Boxing Gloves" } },
+        "g2": { "type": "gear", "settings": { "label": "Headgear" } },
+        "g3": { "type": "gear", "settings": { "label": "Body Protectors" } },
+        "g4": { "type": "gear", "settings": { "label": "Punching Bags" } },
+        "g5": { "type": "gear", "settings": { "label": "Hand Wraps" } },
+        "g6": { "type": "gear", "settings": { "label": "Skipping Ropes" } },
+        "g7": { "type": "gear", "settings": { "label": "Mouthguards" } }
+      },
+      "block_order": ["g1", "g2", "g3", "g4", "g5", "g6", "g7"],
+      "settings": { "heading": "Shop By Gear Type" }
+    },
+    "reviews": {
+      "type": "reviews-carousel",
+      "blocks": {
+        "r1": { "type": "review", "settings": { "rating": 5, "title": "Best gloves I've ever trained with", "text": "The quality is unmatched. I train 5 days a week and these gloves hold up perfectly.", "author": "Marcus J.", "location": "London, UK", "product_name": "Pro Boxing Gloves 12oz" } },
+        "r2": { "type": "review", "settings": { "rating": 5, "title": "Headgear fits perfectly", "text": "Great protection during sparring and very comfortable. Worth every penny.", "author": "Diego R.", "location": "Sydney, Australia", "product_name": "Sparring Headgear" } },
+        "r3": { "type": "review", "settings": { "rating": 5, "title": "Fast shipping, great gear", "text": "Ordered internationally and received quickly. The hand wraps are excellent quality.", "author": "Sarah K.", "location": "Toronto, Canada", "product_name": "Hand Wraps 180\"" } },
+        "r4": { "type": "review", "settings": { "rating": 5, "title": "Heavy bag is incredible", "text": "Solid construction, great for power training. My gym loves it.", "author": "Ali T.", "location": "Dubai, UAE", "product_name": "Heavy Punching Bag" } },
+        "r5": { "type": "review", "settings": { "rating": 5, "title": "Exactly what I needed", "text": "Great starter kit. Everything is high quality and the price is fair.", "author": "James W.", "location": "New York, USA", "product_name": "Training Starter Kit" } }
+      },
+      "block_order": ["r1", "r2", "r3", "r4", "r5"],
+      "settings": { "heading": "Let customers speak for us", "review_count": "250" }
+    }
+  },
+  "order": ["hero", "categories", "activity", "gear_grid", "reviews"]
+}

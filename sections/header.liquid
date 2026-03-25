@@ -1,0 +1,119 @@
+<!-- ── Top Announcement Bar ── -->
+<div class="topbar">
+  <div class="topbar__inner container">
+    <div class="topbar__left">
+      <a href="/pages/contact" class="topbar__link">Help Center</a>
+      <span class="topbar__divider">|</span>
+      <a href="/pages/track-order" class="topbar__link">Track My Order</a>
+    </div>
+    <div class="topbar__center">
+      {{ section.settings.announcement | default: "FREE WORLDWIDE SHIPPING ON ORDERS ABOVE $100" }}
+    </div>
+    <div class="topbar__right">
+      <a href="{{ routes.account_url }}" class="topbar__link">My Account</a>
+      <span class="topbar__divider">|</span>
+      <a href="/pages/contact" class="topbar__link">Contact Us</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── Main Header ── -->
+<header class="site-header" role="banner">
+  <div class="container">
+    <div class="site-header__inner">
+
+      <!-- Logo -->
+      <div class="site-header__logo">
+        <a href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
+          {% if settings.logo %}
+            <img
+              src="{{ settings.logo | image_url: width: 320 }}"
+              alt="{{ shop.name }}"
+              width="{{ settings.logo_width }}"
+              height="auto"
+              loading="eager"
+            >
+          {% else %}
+            <span class="site-header__logo-text">
+              ZEE'S <span>BOXING</span> GEAR
+            </span>
+          {% endif %}
+        </a>
+      </div>
+
+      <!-- Desktop Nav -->
+      <nav class="site-nav" aria-label="Main navigation">
+        {% for link in section.settings.menu.links %}
+          <a
+            href="{{ link.url }}"
+            class="site-nav__link{% if link.active %} active{% endif %}{% if link.title == 'SALE' or link.title == 'Sale' %} site-nav__link--sale{% endif %}"
+          >
+            {{ link.title }}
+          </a>
+        {% endfor %}
+      </nav>
+
+      <!-- Actions -->
+      <div class="site-header__actions">
+        <a href="{{ routes.search_url }}" class="header-icon-btn" aria-label="Search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </a>
+        <a href="{{ routes.account_url }}" class="header-icon-btn" aria-label="Account">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </a>
+        <button class="header-icon-btn" id="cart-toggle" aria-label="Cart" aria-expanded="false" aria-controls="cart-drawer">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <span class="cart-count" id="cart-count" data-count="{{ cart.item_count }}">{{ cart.item_count }}</span>
+        </button>
+
+        <!-- Hamburger -->
+        <button class="hamburger" id="mobile-menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Nav -->
+<nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" aria-hidden="true">
+  {% for link in section.settings.menu.links %}
+    <a href="{{ link.url }}" class="mobile-nav__link{% if link.title == 'SALE' or link.title == 'Sale' %} mobile-nav__link--sale{% endif %}">
+      {{ link.title }}
+    </a>
+  {% endfor %}
+  <div class="mobile-nav__divider"></div>
+  <a href="{{ routes.account_url }}" class="mobile-nav__link">My Account</a>
+  <a href="/pages/track-order" class="mobile-nav__link">Track My Order</a>
+  <a href="/pages/contact" class="mobile-nav__link">Help Center</a>
+  <div class="mobile-nav__cart">
+    <a href="{{ routes.cart_url }}" class="btn btn--primary">View Cart ({{ cart.item_count }})</a>
+  </div>
+</nav>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "text",
+      "id": "announcement",
+      "label": "Announcement Bar Text",
+      "default": "FREE WORLDWIDE SHIPPING ON ORDERS ABOVE $100"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Navigation Menu",
+      "default": "main-menu"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,73 @@
+{% layout 'theme' %}
+
+<div class="auth-page">
+  <div class="auth-card">
+    <h1 class="auth-card__title">{{ 'customer.register.title' | t }}</h1>
+    <p class="auth-card__subtitle">Join the Zee's Boxing Gear community.</p>
+
+    {% form 'create_customer', id: 'register-form' %}
+      {% if form.errors %}
+        <div class="flash-message flash-message--error">
+          {{ form.errors | default_errors }}
+        </div>
+      {% endif %}
+
+      <div class="auth-form">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="form-group">
+            <label for="reg-first-name">{{ 'customer.register.first_name' | t }}</label>
+            <input
+              type="text"
+              id="reg-first-name"
+              name="customer[first_name]"
+              autocomplete="given-name"
+            >
+          </div>
+          <div class="form-group">
+            <label for="reg-last-name">{{ 'customer.register.last_name' | t }}</label>
+            <input
+              type="text"
+              id="reg-last-name"
+              name="customer[last_name]"
+              autocomplete="family-name"
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-email">{{ 'customer.register.email' | t }}</label>
+          <input
+            type="email"
+            id="reg-email"
+            name="customer[email]"
+            autocomplete="email"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="reg-password">{{ 'customer.register.password' | t }}</label>
+          <input
+            type="password"
+            id="reg-password"
+            name="customer[password]"
+            autocomplete="new-password"
+            required
+            minlength="5"
+          >
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full btn--lg" style="margin-top:0.5rem;">
+          {{ 'customer.register.submit' | t }}
+        </button>
+      </div>
+    {% endform %}
+
+    <hr class="auth-divider">
+
+    <div class="auth-links">
+      {{ 'customer.register.have_account' | t }}
+      <a href="{{ routes.account_login_url }}">{{ 'customer.register.login' | t }}</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+<section class="section section-activity">
+  <div class="container">
+    <h2 class="section-title-plain">{{ section.settings.heading | default: "Shop By Activity" }}</h2>
+
+    <div class="activity-layout">
+      <!-- Left: Activity List -->
+      <div class="activity-list" id="activity-list">
+        {% for block in section.blocks %}
+          {% if block.type == 'activity' %}
+            <a
+              href="{{ block.settings.url | default: '#' }}"
+              class="activity-item{% if forloop.first %} is-active{% endif %}"
+              data-activity="{{ forloop.index0 }}"
+              data-image="{{ block.settings.image | image_url: width: 1000 }}"
+              data-alt="{{ block.settings.label }}"
+              {{ block.shopify_attributes }}
+            >
+              <div class="activity-item__thumb">
+                {% if block.settings.image %}
+                  <img
+                    src="{{ block.settings.image | image_url: width: 200 }}"
+                    alt="{{ block.settings.label }}"
+                    width="88"
+                    height="88"
+                    loading="lazy"
+                  >
+                {% else %}
+                  <div class="activity-item__thumb-placeholder"></div>
+                {% endif %}
+              </div>
+              <span class="activity-item__label">{{ block.settings.label }}</span>
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <!-- Right: Featured Image -->
+      <div class="activity-preview">
+        {% assign first_block = section.blocks | where: 'type', 'activity' | first %}
+        <img
+          id="activity-preview-img"
+          src="{{ first_block.settings.image | image_url: width: 1000 }}"
+          alt="{{ first_block.settings.label }}"
+          loading="lazy"
+        >
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Shop By Activity",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Section Heading", "default": "Shop By Activity" }
+  ],
+  "blocks": [
+    {
+      "type": "activity",
+      "name": "Activity",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Activity Image" },
+        { "type": "text", "id": "label", "label": "Activity Name", "default": "Boxing Gloves" },
+        { "type": "url", "id": "url", "label": "Link URL" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop By Activity",
+      "blocks": [
+        { "type": "activity", "settings": { "label": "Boxing Gloves" } },
+        { "type": "activity", "settings": { "label": "Sparring & Headgear" } },
+        { "type": "activity", "settings": { "label": "Heavy Bag Training" } },
+        { "type": "activity", "settings": { "label": "Speed & Cardio" } },
+        { "type": "activity", "settings": { "label": "Wraps & Recovery" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

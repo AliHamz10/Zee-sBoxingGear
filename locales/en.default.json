@@ -1,0 +1,98 @@
+{
+  "general": {
+    "search": {
+      "placeholder": "Search products...",
+      "submit": "Search"
+    },
+    "newsletter": {
+      "label": "Email address",
+      "placeholder": "Enter your email",
+      "submit": "Subscribe",
+      "success": "Thanks for subscribing!"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to Cart",
+      "sold_out": "Sold Out",
+      "unavailable": "Unavailable",
+      "quantity": "Quantity",
+      "sale": "Sale",
+      "new": "New",
+      "best_seller": "Best Seller",
+      "vendor": "Brand",
+      "sku": "SKU",
+      "view_full_details": "View Full Details"
+    },
+    "general": {
+      "title": "Shop All",
+      "no_products": "No products found."
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "Your Cart",
+      "empty": "Your cart is empty.",
+      "continue_shopping": "Continue Shopping",
+      "subtotal": "Subtotal",
+      "checkout": "Checkout",
+      "remove": "Remove",
+      "item_count": {
+        "one": "1 item",
+        "other": "{{ count }} items"
+      }
+    }
+  },
+  "customer": {
+    "login": {
+      "title": "Login",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign In",
+      "forgot_password": "Forgot your password?",
+      "no_account": "Don't have an account?",
+      "create": "Create account"
+    },
+    "register": {
+      "title": "Create Account",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Create Account",
+      "have_account": "Already have an account?",
+      "login": "Sign in"
+    },
+    "account": {
+      "title": "My Account",
+      "orders": "Order History",
+      "details": "Account Details",
+      "logout": "Sign Out"
+    },
+    "orders": {
+      "none": "You haven't placed any orders yet."
+    }
+  },
+  "contact": {
+    "form": {
+      "name": "Your Name",
+      "email": "Email Address",
+      "phone": "Phone (optional)",
+      "subject": "Subject",
+      "message": "Message",
+      "submit": "Send Message",
+      "success": "Thanks for reaching out! We'll get back to you shortly."
+    }
+  },
+  "sections": {
+    "header": {
+      "menu": "Menu",
+      "cart": "Cart",
+      "account": "Account",
+      "search": "Search"
+    },
+    "footer": {
+      "copyright": "All rights reserved."
+    }
+  }
+}
