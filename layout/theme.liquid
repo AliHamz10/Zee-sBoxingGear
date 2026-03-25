@@ -1,14 +1,25 @@
 <!doctype html>
 <html lang="{{ request.locale.iso_code }}">
 <head>
+  {% liquid
+    assign brand_name = settings.brand_name | default: "Zee's Boxing Gear"
+    assign favicon_letter = settings.favicon_letter | default: "Z"
+    assign favicon_bg = settings.color_primary | default: "#355872"
+    assign favicon_data_uri = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230f1720'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial,Helvetica,sans-serif' font-size='34' font-weight='700' fill='white'%3E" | append: favicon_letter | append: "%3C/text%3E%3C/svg%3E"
+    assign resolved_page_title = page_title | strip
+
+    if request.page_type == 'index' or resolved_page_title == blank or resolved_page_title == shop.name or resolved_page_title contains '.myshopify.com'
+      assign resolved_page_title = brand_name
+    endif
+  %}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
   <title>
-    {{ page_title }}{% if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif %}
+    {{ resolved_page_title }}{% if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif %}
     {% if current_page != 1 %} &ndash; Page {{ current_page }}{% endif %}
-    {% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+    {% unless resolved_page_title contains brand_name %} &ndash; {{ brand_name }}{% endunless %}
   </title>
 
   {% if page_description %}
@@ -16,9 +27,15 @@
   {% endif %}
 
   <link rel="canonical" href="{{ canonical_url }}">
+  <meta name="application-name" content="{{ brand_name }}">
+  <meta property="og:site_name" content="{{ brand_name }}">
 
   {% if settings.favicon %}
     <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32 }}">
+    <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180 }}">
+  {% else %}
+    <link rel="icon" type="image/svg+xml" href="{{ favicon_data_uri }}">
+    <link rel="shortcut icon" href="{{ favicon_data_uri }}">
   {% endif %}
 
   <!-- Preconnect for fonts -->
@@ -69,13 +86,13 @@
     </div>
   </div>
 
-  {%- sections 'header' -%}
+  {%- section 'header' -%}
 
   <main id="MainContent" class="main-content" role="main" tabindex="-1">
     {{ content_for_layout }}
   </main>
 
-  {% sections 'footer' %}
+  {% section 'footer' %}
 
   {{ 'theme.js' | asset_url | script_tag }}
 

@@ -1,0 +1,36 @@
+{% liquid
+  assign nav_link = link
+  assign link_title = nav_link.title | default: title
+  assign link_url = nav_link.url | default: url | default: '#'
+  assign link_active = active
+  assign normalized_title = link_title | strip | downcase
+
+  if link_active == blank and nav_link != blank
+    assign link_active = nav_link.current | default: nav_link.active
+  endif
+
+  if normalized_title == 'shop all'
+    assign link_url = routes.all_products_collection_url
+    if request.path == routes.all_products_collection_url
+      assign link_active = true
+    endif
+  elsif normalized_title == 'collections' or normalized_title == 'categories'
+    assign link_url = '/collections'
+    if request.path == '/collections'
+      assign link_active = true
+    endif
+  endif
+
+  assign link_classes = class | default: ''
+  if link_active
+    assign link_classes = link_classes | append: ' ' | append: active_class
+  endif
+
+  if link_title == 'Sale' or link_title == 'SALE'
+    assign link_classes = link_classes | append: ' ' | append: sale_class
+  endif
+%}
+
+<a href="{{ link_url }}" class="{{ link_classes | strip }}">
+  {{ link_title }}
+</a>

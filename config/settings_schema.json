@@ -63,6 +63,12 @@
     "name": "Logo",
     "settings": [
       {
+        "type": "text",
+        "id": "brand_name",
+        "label": "Brand Name",
+        "default": "Zee's Boxing Gear"
+      },
+      {
         "type": "image_picker",
         "id": "logo",
         "label": "Logo Image"
@@ -86,6 +92,12 @@
         "type": "image_picker",
         "id": "favicon",
         "label": "Favicon"
+      },
+      {
+        "type": "text",
+        "id": "favicon_letter",
+        "label": "Fallback Favicon Letter",
+        "default": "Z"
       }
     ]
   },

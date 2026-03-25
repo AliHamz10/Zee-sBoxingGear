@@ -375,7 +375,7 @@
   if (newsletterForm && !newsletterForm.dataset.shopifySubmitted) {
     newsletterForm.addEventListener('submit', (e) => {
       // Let Shopify handle the actual submission, just show success after
-      const successEl = qs('.newsletter-success', newsletterForm.parentElement);
+      const successEl = qs('.footer-newsletter__success', newsletterForm.parentElement);
       setTimeout(() => {
         if (successEl) successEl.classList.add('is-visible');
       }, 600);
@@ -407,34 +407,7 @@
   });
 
   /* ================================================================
-     9. SHOP BY ACTIVITY — interactive list
-  ================================================================ */
-  const activityItems = qsa('.activity-item');
-  const activityPreviewImg = qs('#activity-preview-img');
-
-  activityItems.forEach(item => {
-    item.addEventListener('click', (e) => {
-      e.preventDefault();
-      activityItems.forEach(i => i.classList.remove('is-active'));
-      item.classList.add('is-active');
-
-      if (activityPreviewImg) {
-        const newSrc = item.dataset.image;
-        const newAlt = item.dataset.alt;
-        if (newSrc) {
-          activityPreviewImg.style.opacity = '0';
-          setTimeout(() => {
-            activityPreviewImg.src = newSrc;
-            activityPreviewImg.alt = newAlt || '';
-            activityPreviewImg.style.opacity = '1';
-          }, 180);
-        }
-      }
-    });
-  });
-
-  /* ================================================================
-     10. REVIEWS CAROUSEL
+     9. REVIEWS CAROUSEL
   ================================================================ */
   const reviewsTrack = qs('#reviews-track');
   const reviewsPrev = qs('#reviews-prev');

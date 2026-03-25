@@ -22,12 +22,12 @@
       {% endif %}
       <div class="hero__actions">
         {% if section.settings.btn_label != blank %}
-          <a href="{{ section.settings.btn_url | default: routes.all_products_collection_url }}" class="btn btn--hero">
+          <a href="{{ section.settings.btn_url | default: routes.all_products_collection_url }}" class="btn btn--primary btn--lg hero__button">
             {{ section.settings.btn_label }}
           </a>
         {% endif %}
         {% if section.settings.btn2_label != blank %}
-          <a href="{{ section.settings.btn2_url | default: '#' }}" class="btn btn--hero btn--hero--ghost">
+          <a href="{{ section.settings.btn2_url | default: '#' }}" class="btn btn--secondary btn--lg hero__button hero__button--ghost">
             {{ section.settings.btn2_label }}
           </a>
         {% endif %}

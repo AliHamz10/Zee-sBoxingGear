@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-list-collections",
+      "settings": {
+        "eyebrow": "Shop By Category",
+        "heading": "Product Collections",
+        "subheading": "Browse boxing gloves, protective gear, training equipment, and current sale picks from your live Shopify collections.",
+        "collections_per_page": 12
+      }
+    }
+  },
+  "order": ["main"]
+}

@@ -1,0 +1,49 @@
+{% liquid
+  assign card_collection = collection
+  assign card_title = title
+  assign card_url = url
+  assign card_image = image
+  assign card_meta = meta
+
+  if card_collection != blank
+    if card_title == blank
+      assign card_title = card_collection.title
+    endif
+    if card_url == blank
+      assign card_url = card_collection.url
+    endif
+    if card_image == blank
+      if card_collection.image != blank
+        assign card_image = card_collection.image
+      elsif card_collection.products.first.featured_image != blank
+        assign card_image = card_collection.products.first.featured_image
+      endif
+    endif
+  endif
+
+  assign card_url = card_url | default: '#'
+%}
+
+<a href="{{ card_url }}" class="collection-card{% if class != blank %} {{ class }}{% endif %}">
+  <div class="collection-card__media">
+    {% if card_image %}
+      <img
+        src="{{ card_image | image_url: width: 1200 }}"
+        alt="{{ card_title | escape }}"
+        class="collection-card__image"
+        width="1200"
+        height="1400"
+        loading="lazy"
+      >
+    {% else %}
+      <div class="collection-card__placeholder" aria-hidden="true"></div>
+    {% endif %}
+  </div>
+  <div class="collection-card__overlay">
+    <span class="collection-card__title">{{ card_title }}</span>
+    {% if card_meta != blank %}
+      <span class="collection-card__meta">{{ card_meta }}</span>
+    {% endif %}
+    <span class="collection-card__cta">Shop Collection</span>
+  </div>
+</a>

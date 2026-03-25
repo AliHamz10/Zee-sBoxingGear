@@ -1,0 +1,108 @@
+<section class="section section-list-collections">
+  <div class="collections-hero">
+    <div class="container">
+      <nav class="breadcrumb breadcrumb--light" aria-label="Breadcrumb">
+        <a href="{{ routes.root_url }}">Home</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Collections</span>
+      </nav>
+
+      <div class="collections-hero__content">
+        <p class="collections-hero__eyebrow">{{ section.settings.eyebrow }}</p>
+        <h1 class="collections-hero__title">{{ section.settings.heading }}</h1>
+        {% if section.settings.subheading != blank %}
+          <p class="collections-hero__subtitle">{{ section.settings.subheading }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="collections-listing">
+    <div class="container">
+      {% paginate collections by section.settings.collections_per_page %}
+        {% assign visible_collections = 0 %}
+
+        <div class="collections-listing__grid">
+          {% for item in collections %}
+            {% unless item.handle == 'frontpage' or item.handle == 'all' %}
+              {% assign visible_collections = visible_collections | plus: 1 %}
+              {% capture collection_meta %}
+                {{ item.all_products_count }} product{% if item.all_products_count != 1 %}s{% endif %}
+              {% endcapture %}
+              {% render 'collection-card',
+                collection: item,
+                meta: collection_meta,
+                class: 'collection-card--listing'
+              %}
+            {% endunless %}
+          {% endfor %}
+        </div>
+
+        {% if visible_collections == 0 %}
+          <div class="section-empty-state section-empty-state--collections">
+            <p>Add collections in Shopify Admin and they will appear here automatically.</p>
+          </div>
+        {% endif %}
+
+        {% if paginate.pages > 1 %}
+          <nav class="pagination pagination--collections" aria-label="Pagination">
+            {% if paginate.previous %}
+              <a href="{{ paginate.previous.url }}" class="btn btn--secondary btn--sm">&larr; Prev</a>
+            {% endif %}
+
+            {% for part in paginate.parts %}
+              {% if part.is_link %}
+                <a href="{{ part.url }}" class="btn btn--secondary btn--sm">{{ part.title }}</a>
+              {% else %}
+                {% if part.title == paginate.current_page %}
+                  <span class="btn btn--primary btn--sm" aria-current="page">{{ part.title }}</span>
+                {% else %}
+                  <span class="btn btn--sm pagination__ellipsis">{{ part.title }}</span>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+
+            {% if paginate.next %}
+              <a href="{{ paginate.next.url }}" class="btn btn--secondary btn--sm">Next &rarr;</a>
+            {% endif %}
+          </nav>
+        {% endif %}
+      {% endpaginate %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collections List",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Shop By Category"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Product Collections"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Browse boxing gloves, protective gear, training equipment, and current sale picks from your live Shopify collections."
+    },
+    {
+      "type": "range",
+      "id": "collections_per_page",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "label": "Collections per page",
+      "default": 12
+    }
+  ]
+}
+{% endschema %}
