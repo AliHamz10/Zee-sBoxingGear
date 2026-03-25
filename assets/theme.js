@@ -9,6 +9,22 @@
   const qs = (sel, ctx = document) => ctx.querySelector(sel);
   const qsa = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
 
+  /* ── Topbar: hide on scroll down (mobile only) ── */
+  const topbar = qs('.topbar');
+  if (topbar) {
+    let lastY = 0;
+    window.addEventListener('scroll', () => {
+      if (window.innerWidth >= 901) return;
+      const y = window.scrollY;
+      if (y > lastY && y > 80) {
+        topbar.classList.add('is-hidden');
+      } else {
+        topbar.classList.remove('is-hidden');
+      }
+      lastY = y;
+    }, { passive: true });
+  }
+
   /* ================================================================
      1. MOBILE NAVIGATION
   ================================================================ */
@@ -79,6 +95,11 @@
     if (!cartCountEl) return;
     cartCountEl.textContent = count;
     cartCountEl.dataset.count = count;
+    // Pulse animation on update
+    cartCountEl.classList.remove('is-updated');
+    void cartCountEl.offsetWidth; // reflow
+    cartCountEl.classList.add('is-updated');
+    cartCountEl.addEventListener('animationend', () => cartCountEl.classList.remove('is-updated'), { once: true });
   }
 
   async function fetchCart() {

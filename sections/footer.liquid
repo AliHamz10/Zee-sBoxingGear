@@ -1,5 +1,37 @@
 <footer class="site-footer" role="contentinfo">
 
+  <!-- ── Newsletter ── -->
+  <div class="footer-newsletter">
+    <div class="container">
+      <div class="footer-newsletter__inner">
+        <div class="footer-newsletter__copy">
+          <p class="footer-newsletter__heading">Join the Fight Club</p>
+          <p class="footer-newsletter__sub">Exclusive deals, training tips &amp; early access drops.</p>
+        </div>
+        <div>
+          {% form 'customer', id: 'footer-newsletter-form' %}
+            <input type="hidden" name="contact[tags]" value="newsletter">
+            <div class="footer-newsletter__form">
+              <input
+                type="email"
+                name="contact[email]"
+                class="footer-newsletter__input"
+                placeholder="Enter your email address"
+                required
+                autocomplete="email"
+                aria-label="Email address for newsletter"
+              >
+              <button type="submit" class="footer-newsletter__btn">Subscribe</button>
+            </div>
+            {% if form.posted_successfully? %}
+              <p class="footer-newsletter__success is-visible">You're in! Check your inbox.</p>
+            {% endif %}
+          {% endform %}
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ── Main Footer Grid ── -->
   <div class="footer-main">
     <div class="container">

@@ -3,9 +3,15 @@
     "hero": {
       "type": "hero-banner",
       "settings": {
+        "eyebrow": "Premium Boxing Equipment",
         "heading": "TRAIN LIKE A CHAMPION",
         "subheading": "Premium boxing gear for fighters at every level.",
-        "btn_label": "Shop Now"
+        "btn_label": "Shop Now",
+        "btn2_label": "View All Gear",
+        "trust_1": "Free Shipping Over $100",
+        "trust_2": "30-Day Easy Returns",
+        "trust_3": "Secure Checkout",
+        "trust_4": "Trusted by 10,000+ Fighters"
       }
     },
     "categories": {
