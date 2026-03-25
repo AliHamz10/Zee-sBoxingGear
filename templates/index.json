@@ -1,13 +1,25 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
       "type": "hero-banner",
       "settings": {
+        "bg_image": "shopify://shop_images/HD-wallpaper-fight-club-soap-soap-fight-club.jpg",
         "eyebrow": "Premium Boxing Equipment",
         "heading": "TRAIN LIKE A CHAMPION",
         "subheading": "Premium boxing gear for fighters at every level.",
         "btn_label": "Shop Now",
+        "btn_url": "",
         "btn2_label": "View All Gear",
+        "btn2_url": "",
         "trust_1": "Free Shipping Over $100",
         "trust_2": "30-Day Easy Returns",
         "trust_3": "Secure Checkout",
@@ -17,11 +29,36 @@
     "categories": {
       "type": "shop-by-category",
       "blocks": {
-        "cat1": { "type": "category", "settings": { "label": "GLOVES", "collection": "gloves" } },
-        "cat2": { "type": "category", "settings": { "label": "PROTECTIVE GEAR", "collection": "protective-gear" } },
-        "cat3": { "type": "category", "settings": { "label": "TRAINING EQUIPMENT", "collection": "training-equipment" } }
+        "cat1": {
+          "type": "category",
+          "settings": {
+            "collection": "gloves",
+            "label": "GLOVES",
+            "url": ""
+          }
+        },
+        "cat2": {
+          "type": "category",
+          "settings": {
+            "collection": "protective-gear",
+            "label": "PROTECTIVE GEAR",
+            "url": ""
+          }
+        },
+        "cat3": {
+          "type": "category",
+          "settings": {
+            "collection": "training-equipment",
+            "label": "TRAINING EQUIPMENT",
+            "url": ""
+          }
+        }
       },
-      "block_order": ["cat1", "cat2", "cat3"],
+      "block_order": [
+        "cat1",
+        "cat2",
+        "cat3"
+      ],
       "settings": {
         "eyebrow": "Collections",
         "heading": "Shop By Category",
@@ -41,5 +78,9 @@
       }
     }
   },
-  "order": ["hero", "categories", "featured_products"]
+  "order": [
+    "hero",
+    "categories",
+    "featured_products"
+  ]
 }
