@@ -20,14 +20,20 @@
       <!-- Gallery -->
       <div class="product-gallery">
         <div class="product-gallery__main" id="gallery-main">
-          <img
-            id="gallery-main-img"
-            src="{{ product.featured_image | image_url: width: 900 }}"
-            alt="{{ product.featured_image.alt | escape | default: product.title }}"
-            width="900"
-            height="900"
-            loading="eager"
-          >
+          {% if product.featured_image %}
+            <img
+              id="gallery-main-img"
+              src="{{ product.featured_image | image_url: width: 900 }}"
+              alt="{{ product.featured_image.alt | escape | default: product.title }}"
+              width="900"
+              height="900"
+              loading="eager"
+            >
+          {% else %}
+            <div id="gallery-main-img" style="width:100%;aspect-ratio:1;background:#e8eef3;display:flex;align-items:center;justify-content:center;">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#7AAACE" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+          {% endif %}
         </div>
         {% if product.images.size > 1 %}
           <div class="product-gallery__thumbs" id="gallery-thumbs" role="list">

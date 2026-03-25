@@ -11,7 +11,7 @@
               href="{{ block.settings.url | default: '#' }}"
               class="activity-item{% if forloop.first %} is-active{% endif %}"
               data-activity="{{ forloop.index0 }}"
-              data-image="{{ block.settings.image | image_url: width: 1000 }}"
+              data-image="{% if block.settings.image %}{{ block.settings.image | image_url: width: 1000 }}{% endif %}"
               data-alt="{{ block.settings.label }}"
               {{ block.shopify_attributes }}
             >
@@ -37,12 +37,16 @@
       <!-- Right: Featured Image -->
       <div class="activity-preview">
         {% assign first_block = section.blocks | where: 'type', 'activity' | first %}
-        <img
-          id="activity-preview-img"
-          src="{{ first_block.settings.image | image_url: width: 1000 }}"
-          alt="{{ first_block.settings.label }}"
-          loading="lazy"
-        >
+        {% if first_block and first_block.settings.image %}
+          <img
+            id="activity-preview-img"
+            src="{{ first_block.settings.image | image_url: width: 1000 }}"
+            alt="{{ first_block.settings.label }}"
+            loading="lazy"
+          >
+        {% else %}
+          <div id="activity-preview-img" class="activity-preview__placeholder"></div>
+        {% endif %}
       </div>
     </div>
   </div>
