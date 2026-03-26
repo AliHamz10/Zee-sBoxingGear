@@ -3,36 +3,6 @@
   assign utility_links = section.settings.utility_menu.links
 %}
 
-<!-- ── Top Announcement Bar ── -->
-<div class="topbar">
-  <div class="topbar__inner container">
-    <div class="topbar__left">
-      {% if utility_links != blank %}
-        {% for link in utility_links %}
-          <a href="{{ link.url }}" class="topbar__link">{{ link.title }}</a>
-          {% unless forloop.last %}
-            <span class="topbar__divider">|</span>
-          {% endunless %}
-        {% endfor %}
-      {% else %}
-        <a href="/pages/contact" class="topbar__link">Help Center</a>
-        <span class="topbar__divider">|</span>
-        <a href="/pages/track-order" class="topbar__link">Track My Order</a>
-      {% endif %}
-    </div>
-    <div class="topbar__center">
-      {{ section.settings.announcement | default: "FREE WORLDWIDE SHIPPING ON ORDERS ABOVE $100" }}
-    </div>
-    <div class="topbar__right">
-      <a href="{{ routes.account_url }}" class="topbar__link">My Account</a>
-      {% if section.settings.contact_url != blank %}
-        <span class="topbar__divider">|</span>
-        <a href="{{ section.settings.contact_url }}" class="topbar__link">{{ section.settings.contact_label }}</a>
-      {% endif %}
-    </div>
-  </div>
-</div>
-
 <!-- ── Main Header ── -->
 <header class="site-header" role="banner">
   <div class="container">
