@@ -4,7 +4,7 @@
 
 <section class="tn" id="tn-{{ section_id }}">
 
-  {%- comment -%} ── Header: full-width, dark bg ── {%- endcomment -%}
+  {%- comment -%} ── Header ── {%- endcomment -%}
   <div class="tn__header">
     <h2 class="tn__title">{{ section.settings.heading | default: 'TRENDING NOW' }}</h2>
     <nav class="tn__tabs" aria-label="Product filter tabs">
@@ -19,14 +19,14 @@
     </nav>
   </div>
 
-  {%- comment -%} ── Panels (full-bleed) ── {%- endcomment -%}
+  {%- comment -%} ── Panels ── {%- endcomment -%}
   <div class="tn__panels">
+
     {% for block in section.blocks %}
       {% liquid
-        assign col     = blank
-        assign col_str = block.settings.collection
-        if col_str != blank
-          assign col = collections[col_str]
+        assign col = blank
+        if block.settings.collection != blank
+          assign col = collections[block.settings.collection]
         endif
         assign pid      = section_id | append: '-' | append: forloop.index0
         assign is_first = forloop.first
@@ -39,7 +39,7 @@
       >
         <div class="tn__stage">
 
-          {%- comment -%} Left editorial sliver {%- endcomment -%}
+          {%- comment -%} ── Editorial image column ── {%- endcomment -%}
           {% assign edit_img = block.settings.editorial_image %}
           {% if edit_img == blank %}
             {% assign edit_img = section.settings.editorial_image %}
@@ -48,27 +48,35 @@
           <div class="tn__editorial">
             {% if edit_img %}
               <img
-                src="{{ edit_img | image_url: width: 400 }}"
+                src="{{ edit_img | image_url: width: 900 }}"
                 alt="{{ block.settings.editorial_alt | default: section.settings.editorial_alt | escape }}"
-                width="400"
-                height="640"
+                width="900"
+                height="1080"
                 loading="lazy"
               >
             {% else %}
-              <div class="tn__editorial-fallback">
-                {{ 'collection-apparel-1' | placeholder_svg_tag: 'tn__editorial-svg' }}
+              <div class="tn__editorial-ph">
+                <div class="tn__editorial-ph-content">
+                  <svg class="tn__editorial-ph-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="2.5"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  <p class="tn__editorial-ph-label">Add editorial image<br>in Customizer</p>
+                </div>
               </div>
             {% endif %}
           </div>
 
-          {%- comment -%} Scrollable product track {%- endcomment -%}
+          {%- comment -%} ── Scrollable product track ── {%- endcomment -%}
           <div class="tn__track" id="tn-track-{{ pid }}">
 
             {% if col != blank and col.products_count > 0 %}
+
               {% for product in col.products limit: section.settings.products_per_tab %}
                 {% liquid
-                  assign is_sale      = false
-                  assign color_count  = 0
+                  assign is_sale     = false
+                  assign color_count = 0
                   if product.compare_at_price_max > product.price
                     assign is_sale = true
                   endif
@@ -79,25 +87,33 @@
                       break
                     endif
                   endfor
+                  assign img2 = product.images[1]
                 %}
+
                 <article class="tn-card">
                   <a href="{{ product.url }}" class="tn-card__media" tabindex="-1" aria-hidden="true">
-                    {% if is_sale %}
-                      <span class="tn-card__badge">Sale</span>
-                    {% endif %}
+                    {% if is_sale %}<span class="tn-card__badge">Sale</span>{% endif %}
+
                     {% if product.featured_image %}
                       <img
-                        class="tn-card__img"
-                        src="{{ product.featured_image | image_url: width: 600 }}"
+                        class="tn-card__img tn-card__img--primary"
+                        src="{{ product.featured_image | image_url: width: 640 }}"
                         alt="{{ product.featured_image.alt | escape | default: product.title }}"
-                        width="600"
-                        height="600"
-                        loading="lazy"
+                        width="640" height="640" loading="lazy"
                       >
                     {% else %}
                       <div class="tn-card__no-img">
                         {{ 'product-1' | placeholder_svg_tag: 'tn-card__svg' }}
                       </div>
+                    {% endif %}
+
+                    {% if img2 %}
+                      <img
+                        class="tn-card__img tn-card__img--secondary"
+                        src="{{ img2 | image_url: width: 640 }}"
+                        alt="{{ img2.alt | escape | default: product.title }}"
+                        width="640" height="640" loading="lazy"
+                      >
                     {% endif %}
                   </a>
 
@@ -105,52 +121,49 @@
                     <h3 class="tn-card__name">
                       <a href="{{ product.url }}">{{ product.title }}</a>
                     </h3>
-
                     <p class="tn-card__price">
                       {% if is_sale %}
                         <s class="tn-card__was">{{ product.compare_at_price_max | money }}</s>
                         <span class="tn-card__now">{{ product.price | money }}</span>
                       {% else %}
-                        <span class="tn-card__now tn-card__now--regular">{{ product.price | money }}</span>
+                        <span class="tn-card__now tn-card__now--reg">{{ product.price | money }}</span>
                       {% endif %}
                     </p>
-
                     {% if color_count > 0 %}
                       <button class="tn-card__colors" type="button">
                         {{ color_count }}&nbsp;Color{% if color_count > 1 %}s{% endif %}
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
                       </button>
                     {% endif %}
-
                     <div class="tn-card__stars" aria-label="Rating">
                       <span aria-hidden="true">★★★★★</span>
                     </div>
                   </div>
                 </article>
+
               {% endfor %}
 
             {% else %}
-              {%- comment -%} Demo placeholder cards {%- endcomment -%}
-              {% assign demo_names = 'Leather Gym Duffel Bag,Elite Boxing Shoes,Pro Training Gloves,Powerlock X-Trainer,Advanced Boxing Glove' | split: ',' %}
-              {% assign demo_prices = '$199.99,$119.99,$199.99,$49.99,$62.99' | split: ',' %}
-              {% assign demo_was = ',$,$,$99.99,$89.99' | split: ',' %}
-              {% for i in (1..5) %}
-                {% assign di = forloop.index0 %}
-                <article class="tn-card tn-card--demo">
+
+              {%- comment -%} Demo cards while collection is empty {%- endcomment -%}
+              {% assign _names  = 'Leather Gym Duffel Bag,Elite Boxing Shoes,Pro Training Gloves,Powerlock X-Trainer,Advanced Glove,Speed Rope Pro' | split: ',' %}
+              {% assign _prices = '$199.99,$119.99,$199.99,$49.99,$62.99,$29.99' | split: ',' %}
+              {% assign _was    = ',$,$,$99.99,$89.99,$' | split: ',' %}
+              {% for i in (1..6) %}
+                {% assign _di = forloop.index0 %}
+                <article class="tn-card">
                   <div class="tn-card__media">
-                    {% if i == 4 or i == 5 %}<span class="tn-card__badge">Sale</span>{% endif %}
-                    <div class="tn-card__no-img">
-                      {{ 'product-' | append: i | placeholder_svg_tag: 'tn-card__svg' }}
-                    </div>
+                    {% if _di == 3 or _di == 4 %}<span class="tn-card__badge">Sale</span>{% endif %}
+                    <div class="tn-card__no-img">{{ 'product-' | append: forloop.index | placeholder_svg_tag: 'tn-card__svg' }}</div>
                   </div>
                   <div class="tn-card__info">
-                    <h3 class="tn-card__name"><a href="#">{{ demo_names[di] }}</a></h3>
+                    <h3 class="tn-card__name"><a href="#">{{ _names[_di] }}</a></h3>
                     <p class="tn-card__price">
-                      {% if demo_was[di] != blank and demo_was[di] != '$' %}
-                        <s class="tn-card__was">{{ demo_was[di] }}</s>
-                        <span class="tn-card__now">{{ demo_prices[di] }}</span>
+                      {% if _was[_di] != blank and _was[_di] != '$' %}
+                        <s class="tn-card__was">{{ _was[_di] }}</s>
+                        <span class="tn-card__now">{{ _prices[_di] }}</span>
                       {% else %}
-                        <span class="tn-card__now tn-card__now--regular">{{ demo_prices[di] }}</span>
+                        <span class="tn-card__now tn-card__now--reg">{{ _prices[_di] }}</span>
                       {% endif %}
                     </p>
                     <button class="tn-card__colors" type="button">
@@ -161,10 +174,11 @@
                   </div>
                 </article>
               {% endfor %}
+
             {% endif %}
 
-          </div><!-- /.tn__track -->
-        </div><!-- /.tn__stage -->
+          </div>{%- comment -%}/.tn__track{%- endcomment -%}
+        </div>{%- comment -%}/.tn__stage{%- endcomment -%}
 
         {%- comment -%} ── Dots + counter ── {%- endcomment -%}
         <div class="tn__nav">
@@ -174,151 +188,172 @@
           </p>
         </div>
 
-      </div><!-- /.tn__panel -->
+      </div>{%- comment -%}/.tn__panel{%- endcomment -%}
     {% endfor %}
-  </div><!-- /.tn__panels -->
 
+  </div>{%- comment -%}/.tn__panels{%- endcomment -%}
 </section>
 
 <script>
 (function () {
-  const ROOT = document.getElementById('tn-{{ section_id }}');
+  var ROOT = document.getElementById('tn-{{ section_id }}');
   if (!ROOT) return;
 
-  /* ── helpers ─────────────────────────────────────────── */
-  const qs  = (sel, ctx) => (ctx || ROOT).querySelector(sel);
-  const qsa = (sel, ctx) => [...(ctx || ROOT).querySelectorAll(sel)];
+  function qs(sel, ctx)  { return (ctx || ROOT).querySelector(sel); }
+  function qsa(sel, ctx) { return Array.prototype.slice.call((ctx || ROOT).querySelectorAll(sel)); }
 
-  /* ── tab switching with fade ─────────────────────────── */
-  qsa('[data-tn-btn]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      qsa('[data-tn-btn]').forEach(b => b.classList.remove('is-active'));
+  /* ─────────────────────────────────────────
+     TAB SWITCHING  + stagger-fade cards
+  ───────────────────────────────────────── */
+  qsa('[data-tn-btn]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (btn.classList.contains('is-active')) return;
+
+      // Swap active tab button
+      qsa('[data-tn-btn]').forEach(function(b) { b.classList.remove('is-active'); });
       btn.classList.add('is-active');
-      const pid = btn.dataset.tnBtn;
-      qsa('[data-tn-panel]').forEach(p => {
-        const active = p.dataset.tnPanel === pid;
-        p.classList.toggle('is-active', active);
-        p.setAttribute('aria-hidden', String(!active));
-      });
-      initCarousel(pid);
+
+      var pid = btn.dataset.tnBtn;
+
+      // Fade out current
+      var leaving = qs('[data-tn-panel].is-active');
+      if (leaving) {
+        leaving.classList.add('is-leaving');
+        setTimeout(function() {
+          leaving.classList.remove('is-active', 'is-leaving');
+          leaving.setAttribute('aria-hidden', 'true');
+        }, 220);
+      }
+
+      // Fade in new with stagger
+      setTimeout(function() {
+        var entering = qs('[data-tn-panel="' + pid + '"]');
+        if (!entering) return;
+        entering.classList.add('is-active');
+        entering.setAttribute('aria-hidden', 'false');
+        staggerIn(entering);
+        initCarousel(pid);
+      }, 240);
     });
   });
 
-  /* ── carousel ────────────────────────────────────────── */
-  const carousels = {};
-
-  function initCarousel(pid) {
-    const track = document.getElementById('tn-track-' + pid);
-    const dotsEl = qs('[data-tn-dots="' + pid + '"]');
-    const curEl  = qs('[data-tn-cur="' + pid + '"]');
-    const totEl  = qs('[data-tn-tot="' + pid + '"]');
-    if (!track) return;
-
-    const cards = qsa('.tn-card', track);
-    if (!cards.length) return;
-
-    // Already initialised?
-    if (carousels[pid]) { updateDots(pid); return; }
-    carousels[pid] = { track, dotsEl, curEl, totEl, cards, current: 0 };
-
-    buildDots(pid);
-
-    // Scroll sync
-    let t;
-    track.addEventListener('scroll', () => {
-      clearTimeout(t);
-      t = setTimeout(() => syncFromScroll(pid), 60);
-    }, { passive: true });
-
-    // Touch swipe
-    let startX = 0;
-    track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
-    track.addEventListener('touchend', e => {
-      const dx = e.changedTouches[0].clientX - startX;
-      if (Math.abs(dx) > 40) {
-        const c = carousels[pid];
-        goTo(pid, dx < 0 ? c.current + 1 : c.current - 1);
-      }
-    }, { passive: true });
-  }
-
-  function cardWidth(pid) {
-    const { track, cards } = carousels[pid];
-    const style = getComputedStyle(track);
-    const gap = parseFloat(style.columnGap || style.gap || 0) || 0;
-    return cards[0].getBoundingClientRect().width + gap;
-  }
-
-  function pageCount(pid) {
-    const { track, cards } = carousels[pid];
-    const visible = Math.max(1, Math.floor(track.offsetWidth / cardWidth(pid)));
-    return Math.max(1, Math.ceil(cards.length / visible));
-  }
-
-  function buildDots(pid) {
-    const { dotsEl, totEl } = carousels[pid];
-    if (!dotsEl) return;
-    const pages = pageCount(pid);
-    totEl && (totEl.textContent = pages);
-    dotsEl.innerHTML = '';
-    for (let i = 0; i < pages; i++) {
-      const d = document.createElement('button');
-      d.type = 'button';
-      d.className = 'tn__dot' + (i === 0 ? ' is-active' : '');
-      d.setAttribute('aria-label', 'Page ' + (i + 1));
-      d.addEventListener('click', () => goTo(pid, i));
-      dotsEl.appendChild(d);
-    }
-  }
-
-  function updateDots(pid) {
-    const { dotsEl } = carousels[pid];
-    if (!dotsEl) return;
-    const pages = pageCount(pid);
-    if (dotsEl.children.length !== pages) buildDots(pid);
-  }
-
-  function goTo(pid, page) {
-    const c = carousels[pid];
-    const pages = pageCount(pid);
-    page = Math.max(0, Math.min(page, pages - 1));
-    c.current = page;
-    const visible = Math.max(1, Math.floor(c.track.offsetWidth / cardWidth(pid)));
-    c.track.scrollTo({ left: page * visible * cardWidth(pid), behavior: 'smooth' });
-    setActiveDot(pid, page);
-  }
-
-  function syncFromScroll(pid) {
-    const c = carousels[pid];
-    const cw = cardWidth(pid);
-    const visible = Math.max(1, Math.floor(c.track.offsetWidth / cw));
-    const page = Math.round(c.track.scrollLeft / (visible * cw));
-    if (page !== c.current) {
-      c.current = page;
-      setActiveDot(pid, page);
-    }
-  }
-
-  function setActiveDot(pid, page) {
-    const { dotsEl, curEl } = carousels[pid];
-    curEl && (curEl.textContent = page + 1);
-    if (!dotsEl) return;
-    [...dotsEl.querySelectorAll('.tn__dot')].forEach((d, i) => {
-      d.classList.toggle('is-active', i === page);
+  /* Stagger-fade cards into view */
+  function staggerIn(panel) {
+    var cards = qsa('.tn-card', panel);
+    cards.forEach(function(card, i) {
+      card.style.opacity    = '0';
+      card.style.transform  = 'translateY(18px)';
+      card.style.transition = 'none';
+      // Force reflow then animate
+      requestAnimationFrame(function() {
+        setTimeout(function() {
+          card.style.transition = 'opacity 0.38s ease, transform 0.38s cubic-bezier(0.22,1,0.36,1)';
+          card.style.opacity    = '1';
+          card.style.transform  = 'translateY(0)';
+        }, i * 60);
+      });
     });
   }
 
-  /* ── init first panel ────────────────────────────────── */
-  const firstPanel = qs('[data-tn-panel].is-active');
-  if (firstPanel) initCarousel(firstPanel.dataset.tnPanel);
+  /* ─────────────────────────────────────────
+     CAROUSEL  (dots + counter + scroll/touch)
+  ───────────────────────────────────────── */
+  var CAR = {};
 
-  /* ── rebuild on resize ───────────────────────────────── */
-  let resizeT;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeT);
-    resizeT = setTimeout(() => {
-      Object.keys(carousels).forEach(pid => updateDots(pid));
-    }, 200);
+  function initCarousel(pid) {
+    var track  = document.getElementById('tn-track-' + pid);
+    var dotsEl = qs('[data-tn-dots="' + pid + '"]');
+    var curEl  = qs('[data-tn-cur="'  + pid + '"]');
+    var totEl  = qs('[data-tn-tot="'  + pid + '"]');
+    if (!track) return;
+    var cards = qsa('.tn-card', track);
+    if (!cards.length) return;
+
+    if (CAR[pid]) { rebuildDots(pid); return; }
+    CAR[pid] = { track: track, dotsEl: dotsEl, curEl: curEl, totEl: totEl, cards: cards, cur: 0 };
+    buildDots(pid);
+
+    var t;
+    track.addEventListener('scroll', function() {
+      clearTimeout(t);
+      t = setTimeout(function() { syncScroll(pid); }, 70);
+    }, { passive: true });
+
+    // Touch swipe
+    var sx = 0;
+    track.addEventListener('touchstart', function(e) { sx = e.touches[0].clientX; }, { passive: true });
+    track.addEventListener('touchend',   function(e) {
+      var dx = e.changedTouches[0].clientX - sx;
+      if (Math.abs(dx) > 44) goTo(pid, CAR[pid].cur + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+  }
+
+  function cardW(pid) {
+    var c   = CAR[pid];
+    var gap = parseFloat(getComputedStyle(c.track).columnGap || 0) || 0;
+    return c.cards[0].getBoundingClientRect().width + gap;
+  }
+  function visible(pid) { return Math.max(1, Math.floor(CAR[pid].track.offsetWidth / cardW(pid))); }
+  function pages(pid)   { return Math.max(1, Math.ceil(CAR[pid].cards.length / visible(pid))); }
+
+  function buildDots(pid) {
+    var c = CAR[pid];
+    if (!c.dotsEl) return;
+    var pg = pages(pid);
+    if (c.totEl) c.totEl.textContent = pg;
+    c.dotsEl.innerHTML = '';
+    for (var i = 0; i < pg; i++) {
+      (function(idx) {
+        var d = document.createElement('button');
+        d.type = 'button';
+        d.className = 'tn__dot' + (idx === 0 ? ' is-active' : '');
+        d.setAttribute('aria-label', 'Page ' + (idx + 1));
+        d.addEventListener('click', function() { goTo(pid, idx); });
+        c.dotsEl.appendChild(d);
+      })(i);
+    }
+  }
+
+  function rebuildDots(pid) {
+    var c = CAR[pid];
+    if (!c.dotsEl || c.dotsEl.children.length === pages(pid)) return;
+    buildDots(pid);
+  }
+
+  function goTo(pid, pg) {
+    var c = CAR[pid];
+    pg = Math.max(0, Math.min(pg, pages(pid) - 1));
+    c.cur = pg;
+    c.track.scrollTo({ left: pg * visible(pid) * cardW(pid), behavior: 'smooth' });
+    setDot(pid, pg);
+  }
+
+  function syncScroll(pid) {
+    var c  = CAR[pid];
+    var pg = Math.round(c.track.scrollLeft / (visible(pid) * cardW(pid)));
+    if (pg !== c.cur) { c.cur = pg; setDot(pid, pg); }
+  }
+
+  function setDot(pid, pg) {
+    var c = CAR[pid];
+    if (c.curEl) c.curEl.textContent = pg + 1;
+    if (!c.dotsEl) return;
+    qsa('.tn__dot', c.dotsEl).forEach(function(d, i) { d.classList.toggle('is-active', i === pg); });
+  }
+
+  /* ── Init first panel ── */
+  var first = qs('[data-tn-panel].is-active');
+  if (first) {
+    var fpid = first.dataset.tnPanel;
+    initCarousel(fpid);
+    staggerIn(first);
+  }
+
+  /* ── Rebuild on resize ── */
+  var rt;
+  window.addEventListener('resize', function() {
+    clearTimeout(rt);
+    rt = setTimeout(function() { Object.keys(CAR).forEach(function(pid) { rebuildDots(pid); }); }, 200);
   });
 })();
 </script>
@@ -336,7 +371,7 @@
     {
       "type": "image_picker",
       "id": "editorial_image",
-      "label": "Default editorial image (left sliver)"
+      "label": "Default editorial image"
     },
     {
       "type": "text",
