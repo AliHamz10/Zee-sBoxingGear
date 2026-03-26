@@ -1241,20 +1241,6 @@ p:last-child { margin-bottom: 0; }
   .reviews-carousel__btn { display: none; }
 }
 
-.section-featured-products {
-  padding: 2rem 0 5rem;
-}
-.section-empty-state {
-  border: 1px solid #d8e4ee;
-  border-radius: 24px;
-  padding: 2rem;
-  background: linear-gradient(180deg, #fbfdff 0%, #f2f7fb 100%);
-  color: #50687e;
-}
-.product-grid--homepage {
-  padding-top: 0.5rem;
-}
-
 /* ── Product Card ── */
 .product-card {
   background: #fff;
