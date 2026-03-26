@@ -65,6 +65,45 @@
       "block_order": ["cat1", "cat2", "cat3", "cat4", "cat5", "cat6"],
       "settings": {}
     },
+    "trending_now": {
+      "type": "trending-now",
+      "blocks": {
+        "tab1": {
+          "type": "tab",
+          "settings": {
+            "label": "BEST SELLERS",
+            "collection": "all",
+            "editorial_image": "",
+            "editorial_alt": "Featured athlete"
+          }
+        },
+        "tab2": {
+          "type": "tab",
+          "settings": {
+            "label": "BOXING GLOVES",
+            "collection": "boxing-gloves",
+            "editorial_image": "",
+            "editorial_alt": ""
+          }
+        },
+        "tab3": {
+          "type": "tab",
+          "settings": {
+            "label": "EQUIPMENT",
+            "collection": "all",
+            "editorial_image": "",
+            "editorial_alt": ""
+          }
+        }
+      },
+      "block_order": ["tab1", "tab2", "tab3"],
+      "settings": {
+        "heading": "TRENDING NOW",
+        "editorial_image": "",
+        "editorial_alt": "Featured athlete",
+        "products_per_tab": 8
+      }
+    },
     "featured_products": {
       "type": "featured-products",
       "settings": {
@@ -81,6 +120,7 @@
   "order": [
     "hero",
     "categories",
+    "trending_now",
     "featured_products"
   ]
 }
