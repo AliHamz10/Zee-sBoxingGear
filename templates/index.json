@@ -103,24 +103,11 @@
         "editorial_alt": "Featured athlete",
         "products_per_tab": 8
       }
-    },
-    "featured_products": {
-      "type": "featured-products",
-      "settings": {
-        "eyebrow": "Featured Products",
-        "heading": "Frontline Picks",
-        "subheading": "Equipment you need, we have it.",
-        "collection": "all",
-        "show_quick_add": true,
-        "show_view_all": true,
-        "view_all_label": "Shop All"
-      }
     }
   },
   "order": [
     "hero",
     "categories",
-    "trending_now",
-    "featured_products"
+    "trending_now"
   ]
 }

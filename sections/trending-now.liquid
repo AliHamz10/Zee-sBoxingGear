@@ -3,8 +3,6 @@
 %}
 
 <section class="tn" id="tn-{{ section_id }}">
-
-  {%- comment -%} ── Header ── {%- endcomment -%}
   <div class="tn__header">
     <h2 class="tn__title">{{ section.settings.heading | default: 'TRENDING NOW' }}</h2>
     <nav class="tn__tabs" aria-label="Product filter tabs">
@@ -19,16 +17,15 @@
     </nav>
   </div>
 
-  {%- comment -%} ── Panels ── {%- endcomment -%}
   <div class="tn__panels">
-
     {% for block in section.blocks %}
       {% liquid
         assign col = blank
         if block.settings.collection != blank
           assign col = collections[block.settings.collection]
         endif
-        assign pid      = section_id | append: '-' | append: forloop.index0
+
+        assign pid = section_id | append: '-' | append: forloop.index0
         assign is_first = forloop.first
 
         assign edit_img = block.settings.editorial_image
@@ -36,6 +33,13 @@
           assign edit_img = section.settings.editorial_image
         endif
         assign edit_alt = block.settings.editorial_alt | default: section.settings.editorial_alt | default: 'Featured athlete'
+
+        assign demo_names = 'Pro Sparring Gloves,Speed Bag Platform,Elite Boxing Shoes,Heavy Bag 100 lb,Compression Shorts,Head Guard Pro,Training Mitts,Skipping Rope Pro' | split: ','
+        assign demo_prices = '19999,11999,12999,18999,3499,8999,5499,2499' | split: ','
+        assign demo_was = '24999,0,16999,22999,0,11999,6999,0' | split: ','
+        assign demo_colors = '4,0,3,2,5,0,2,4' | split: ','
+        assign demo_svgs = '1,2,3,4,5,6,1,2' | split: ','
+        assign shown_products = 0
       %}
 
       <div
@@ -43,11 +47,7 @@
         data-tn-panel="{{ pid }}"
         aria-hidden="{% unless is_first %}true{% endunless %}"
       >
-
-        {%- comment -%} ── Track: editorial first slide + product cards ── {%- endcomment -%}
         <div class="tn__track" id="tn-track-{{ pid }}">
-
-          {%- comment -%} Editorial image – first slide, hidden on mobile ── {%- endcomment -%}
           <div class="tn__editorial">
             {% if edit_img %}
               <img
@@ -60,10 +60,10 @@
             {% else %}
               <div class="tn__editorial-ph">
                 <div class="tn__editorial-ph-content">
-                  <svg class="tn__editorial-ph-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect x="3" y="3" width="18" height="18" rx="2.5"/>
-                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                    <polyline points="21 15 16 10 5 21"/>
+                  <svg class="tn__editorial-ph-icon" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="2.5" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <polyline points="21 15 16 10 5 21" />
                   </svg>
                   <p class="tn__editorial-ph-label">Add editorial image<br>in Customizer</p>
                 </div>
@@ -71,15 +71,13 @@
             {% endif %}
           </div>
 
-          {%- comment -%} Product cards ── {%- endcomment -%}
           {% if col != blank and col.products_count > 0 %}
-
             {% for product in col.products limit: section.settings.products_per_tab %}
               {% liquid
-                assign is_sale       = false
-                assign color_count   = 0
+                assign shown_products = shown_products | plus: 1
+                assign is_sale = false
+                assign color_count = 0
                 assign color_opt_idx = nil
-
                 if product.compare_at_price_max > product.price
                   assign is_sale = true
                 endif
@@ -113,10 +111,12 @@
                       class="tn-card__img tn-card__img--primary"
                       src="{{ product.featured_image | image_url: width: 640 }}"
                       alt="{{ product.featured_image.alt | escape | default: product.title }}"
-                      width="640" height="640" loading="lazy"
+                      width="640"
+                      height="640"
+                      loading="lazy"
                     >
                   {% else %}
-                    <div class="tn-card__no-img">
+                    <div class="tn-card__ph tn-card__ph--a">
                       {{ 'product-1' | placeholder_svg_tag: 'tn-card__svg' }}
                     </div>
                   {% endif %}
@@ -126,15 +126,19 @@
                       class="tn-card__img tn-card__img--secondary"
                       src="{{ img2 | image_url: width: 640 }}"
                       alt="{{ img2.alt | escape | default: product.title }}"
-                      width="640" height="640" loading="lazy"
+                      width="640"
+                      height="640"
+                      loading="lazy"
                     >
+                  {% else %}
+                    <div class="tn-card__ph tn-card__ph--b">
+                      {{ 'product-2' | placeholder_svg_tag: 'tn-card__svg' }}
+                    </div>
                   {% endif %}
                 </a>
 
                 <div class="tn-card__info">
-                  <h3 class="tn-card__name">
-                    <a href="{{ product.url }}">{{ product.title }}</a>
-                  </h3>
+                  <h3 class="tn-card__name"><a href="{{ product.url }}">{{ product.title }}</a></h3>
                   <p class="tn-card__price">
                     {% if is_sale %}
                       <s class="tn-card__was">{{ product.compare_at_price_max | money }}</s>
@@ -144,85 +148,103 @@
                     {% endif %}
                   </p>
 
-                  {% if color_count > 0 %}
+                  {% if color_count > 0 and color_opt_idx != nil %}
                     <div class="tn-card__colors-wrap">
                       <button class="tn-card__colors" type="button" data-swatch-toggle aria-expanded="false">
                         <span>{{ color_count }}&nbsp;Color{% if color_count > 1 %}s{% endif %}</span>
-                        <svg class="tn-card__colors-chevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                        <svg class="tn-card__chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>
                       </button>
-                      {% if color_opt_idx != nil %}
-                        <div class="tn-card__swatches" hidden>
-                          {% assign seen_colors = '' %}
-                          {% for variant in product.variants limit: 20 %}
-                            {% assign vc      = variant.options[color_opt_idx] %}
-                            {% assign vc_slug = vc | handleize %}
-                            {% unless seen_colors contains vc_slug %}
-                              {% assign seen_colors = seen_colors | append: vc_slug | append: '|' %}
-                              <button
-                                class="tn-card__swatch"
-                                type="button"
-                                aria-label="{{ vc | escape }}"
-                                title="{{ vc | escape }}"
-                                data-swatch-img="{{ variant.featured_media.preview_image | image_url: width: 640 }}"
-                                {% if variant.featured_media %}
-                                  style="background-image: url('{{ variant.featured_media.preview_image | image_url: width: 80 }}');"
-                                {% endif %}
-                              ></button>
-                            {% endunless %}
-                          {% endfor %}
-                        </div>
-                      {% endif %}
+
+                      <div class="tn-card__swatches" hidden>
+                        {% assign seen_colors = '' %}
+                        {% for variant in product.variants limit: 20 %}
+                          {% liquid
+                            assign vc = variant.options[color_opt_idx]
+                            assign vc_slug = vc | handleize
+                            assign swatch_img = ''
+                            assign swatch_bg = ''
+                            if variant.featured_media
+                              assign swatch_img = variant.featured_media.preview_image | image_url: width: 640
+                              assign swatch_bg = variant.featured_media.preview_image | image_url: width: 80
+                            endif
+                          %}
+                          {% unless seen_colors contains vc_slug %}
+                            {% assign seen_colors = seen_colors | append: vc_slug | append: '|' %}
+                            <button
+                              class="tn-card__swatch{% if forloop.first %} is-active{% endif %}"
+                              type="button"
+                              aria-label="{{ vc | escape }}"
+                              title="{{ vc | escape }}"
+                              {% if swatch_img != blank %}data-swatch-img="{{ swatch_img }}"{% endif %}
+                              {% if swatch_bg != blank %}style="background-image:url('{{ swatch_bg }}');"{% endif %}
+                            ></button>
+                          {% endunless %}
+                        {% endfor %}
+                      </div>
                     </div>
                   {% endif %}
 
-                  <div class="tn-card__stars" aria-label="Rating">
-                    <span aria-hidden="true">★★★★★</span>
-                  </div>
-                </div>
-              </article>
-
-            {% endfor %}
-
-          {% else %}
-
-            {%- comment -%} Demo cards when no collection set {%- endcomment -%}
-            {% assign _names  = 'Leather Gym Duffel Bag,Elite Boxing Shoes,Pro Training Gloves,Powerlock X-Trainer,Advanced Glove,Speed Rope Pro' | split: ',' %}
-            {% assign _prices = '$199.99,$119.99,$199.99,$49.99,$62.99,$29.99' | split: ',' %}
-            {% assign _was    = ',$,$,$99.99,$89.99,$' | split: ',' %}
-            {% for i in (1..6) %}
-              {% assign _di = forloop.index0 %}
-              <article class="tn-card" data-product-card>
-                <div class="tn-card__media">
-                  {% if _di == 3 or _di == 4 %}<span class="tn-card__badge">Sale</span>{% endif %}
-                  <div class="tn-card__no-img">{{ 'product-' | append: forloop.index | placeholder_svg_tag: 'tn-card__svg' }}</div>
-                </div>
-                <div class="tn-card__info">
-                  <h3 class="tn-card__name"><a href="#">{{ _names[_di] }}</a></h3>
-                  <p class="tn-card__price">
-                    {% if _was[_di] != blank and _was[_di] != '$' %}
-                      <s class="tn-card__was">{{ _was[_di] }}</s>
-                      <span class="tn-card__now">{{ _prices[_di] }}</span>
-                    {% else %}
-                      <span class="tn-card__now tn-card__now--reg">{{ _prices[_di] }}</span>
-                    {% endif %}
-                  </p>
-                  <div class="tn-card__colors-wrap">
-                    <button class="tn-card__colors" type="button" data-swatch-toggle aria-expanded="false">
-                      <span>{{ forloop.index | plus: 1 }}&nbsp;Colors</span>
-                      <svg class="tn-card__colors-chevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-                    </button>
-                    <div class="tn-card__swatches" hidden></div>
-                  </div>
                   <div class="tn-card__stars" aria-label="Rating"><span aria-hidden="true">★★★★★</span></div>
                 </div>
               </article>
             {% endfor %}
-
           {% endif %}
 
-        </div>{%- comment -%}/.tn__track{%- endcomment -%}
+          {% assign demo_needed = section.settings.products_per_tab | minus: shown_products %}
+          {% if demo_needed > 0 %}
+            {% for demo_name in demo_names limit: demo_needed %}
+              {% liquid
+                assign demo_index = forloop.index0
+                assign demo_price = demo_prices[demo_index] | plus: 0
+                assign demo_compare = demo_was[demo_index] | plus: 0
+                assign demo_color_count = demo_colors[demo_index] | plus: 0
+                assign demo_svg = demo_svgs[demo_index]
+                assign swatch_palette = '#c8111b,#111111,#d7d7d7,#1a4fa0,#e8c200' | split: ','
+              %}
 
-        {%- comment -%} ── Progress bar + counter ── {%- endcomment -%}
+              <article class="tn-card" data-product-card>
+                <div class="tn-card__media">
+                  {% if demo_compare > 0 %}<span class="tn-card__badge">Sale</span>{% endif %}
+                  <div class="tn-card__ph tn-card__ph--a">
+                    {{ 'product-' | append: demo_svg | placeholder_svg_tag: 'tn-card__svg' }}
+                  </div>
+                  <div class="tn-card__ph tn-card__ph--b">
+                    {{ 'product-' | append: demo_svg | placeholder_svg_tag: 'tn-card__svg' }}
+                  </div>
+                </div>
+
+                <div class="tn-card__info">
+                  <h3 class="tn-card__name"><span>{{ demo_name }}</span></h3>
+                  <p class="tn-card__price">
+                    {% if demo_compare > 0 %}
+                      <s class="tn-card__was">{{ demo_compare | money }}</s>
+                      <span class="tn-card__now">{{ demo_price | money }}</span>
+                    {% else %}
+                      <span class="tn-card__now tn-card__now--reg">{{ demo_price | money }}</span>
+                    {% endif %}
+                  </p>
+
+                  {% if demo_color_count > 0 %}
+                    <div class="tn-card__colors-wrap">
+                      <button class="tn-card__colors" type="button" data-swatch-toggle aria-expanded="false">
+                        <span>{{ demo_color_count }}&nbsp;Color{% if demo_color_count > 1 %}s{% endif %}</span>
+                        <svg class="tn-card__chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>
+                      </button>
+                      <div class="tn-card__swatches" hidden>
+                        {% for swatch in swatch_palette limit: demo_color_count %}
+                          <button class="tn-card__swatch{% if forloop.first %} is-active{% endif %}" type="button" aria-label="Color {{ forloop.index }}" style="background-color:{{ swatch }};"></button>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  {% endif %}
+
+                  <div class="tn-card__stars" aria-label="Rating"><span aria-hidden="true">★★★★★</span></div>
+                </div>
+              </article>
+            {% endfor %}
+          {% endif %}
+        </div>
+
         <div class="tn__nav">
           <div class="tn__progress-wrap">
             <div class="tn__progress-bar" data-tn-prog="{{ pid }}"></div>
@@ -231,11 +253,9 @@
             <span data-tn-cur="{{ pid }}">1</span>&nbsp;/&nbsp;<span data-tn-tot="{{ pid }}">1</span>
           </p>
         </div>
-
-      </div>{%- comment -%}/.tn__panel{%- endcomment -%}
+      </div>
     {% endfor %}
-
-  </div>{%- comment -%}/.tn__panels{%- endcomment -%}
+  </div>
 </section>
 
 <script>
@@ -243,171 +263,206 @@
   var ROOT = document.getElementById('tn-{{ section_id }}');
   if (!ROOT) return;
 
-  function qs(sel, ctx)  { return (ctx || ROOT).querySelector(sel); }
-  function qsa(sel, ctx) { return Array.prototype.slice.call((ctx || ROOT).querySelectorAll(sel)); }
+  var SWITCH_MS = 420;
+  var CAR = {};
 
-  /* ─────────────────────────────────────────
-     TAB SWITCHING + stagger-fade cards
-  ───────────────────────────────────────── */
-  qsa('[data-tn-btn]').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      if (btn.classList.contains('is-active')) return;
+  function qs(sel, ctx) {
+    return (ctx || ROOT).querySelector(sel);
+  }
 
-      qsa('[data-tn-btn]').forEach(function(b) { b.classList.remove('is-active'); });
-      btn.classList.add('is-active');
+  function qsa(sel, ctx) {
+    return Array.prototype.slice.call((ctx || ROOT).querySelectorAll(sel));
+  }
 
-      var pid = btn.dataset.tnBtn;
-
-      var leaving = qs('[data-tn-panel].is-active');
-      if (leaving) {
-        leaving.classList.add('is-leaving');
-        setTimeout(function() {
-          leaving.classList.remove('is-active', 'is-leaving');
-          leaving.setAttribute('aria-hidden', 'true');
-        }, 220);
-      }
-
-      setTimeout(function() {
-        var entering = qs('[data-tn-panel="' + pid + '"]');
-        if (!entering) return;
-        entering.classList.add('is-active');
-        entering.setAttribute('aria-hidden', 'false');
-        staggerIn(entering);
-        initCarousel(pid);
-      }, 240);
-    });
-  });
-
-  /* Stagger-fade product cards into view */
-  function staggerIn(panel) {
-    var cards = qsa('[data-product-card]', panel);
-    cards.forEach(function(card, i) {
-      card.style.opacity    = '0';
-      card.style.transform  = 'translateY(18px)';
+  function staggerCards(panel) {
+    qsa('[data-product-card]', panel).forEach(function(card, i) {
+      card.style.opacity = '0';
+      card.style.transform = 'translate3d(0, 12px, 0)';
       card.style.transition = 'none';
+
       requestAnimationFrame(function() {
-        setTimeout(function() {
-          card.style.transition = 'opacity 0.38s ease, transform 0.38s cubic-bezier(0.22,1,0.36,1)';
-          card.style.opacity    = '1';
-          card.style.transform  = 'translateY(0)';
-        }, i * 55);
+        requestAnimationFrame(function() {
+          var delay = (i * 36 + 50) + 'ms';
+          card.style.transition = 'opacity .34s ease ' + delay + ', transform .34s cubic-bezier(.22,1,.36,1) ' + delay;
+          card.style.opacity = '1';
+          card.style.transform = 'translate3d(0, 0, 0)';
+        });
       });
     });
   }
 
-  /* ─────────────────────────────────────────
-     CAROUSEL — progress bar + counter
-  ───────────────────────────────────────── */
-  var CAR = {};
+  function bindTabs() {
+    qsa('[data-tn-btn]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        if (btn.classList.contains('is-active')) return;
+
+        qsa('[data-tn-btn]').forEach(function(otherBtn) {
+          otherBtn.classList.remove('is-active');
+        });
+        btn.classList.add('is-active');
+
+        var panels = qs('.tn__panels');
+        var entering = qs('[data-tn-panel="' + btn.dataset.tnBtn + '"]');
+        var leaving = qs('[data-tn-panel].is-active');
+        if (!entering || entering === leaving) return;
+
+        if (leaving) {
+          leaving.classList.remove('is-active', 'is-entering');
+          leaving.classList.add('is-leaving');
+          leaving.setAttribute('aria-hidden', 'true');
+          window.setTimeout(function() {
+            leaving.classList.remove('is-leaving');
+          }, SWITCH_MS);
+        }
+
+        entering.classList.remove('is-leaving', 'is-entering');
+        entering.classList.add('is-active');
+        entering.setAttribute('aria-hidden', 'false');
+        panels.style.minHeight = Math.max(leaving ? leaving.offsetHeight : 0, entering.offsetHeight) + 'px';
+
+        void entering.offsetWidth;
+        entering.classList.add('is-entering');
+
+        window.setTimeout(function() {
+          entering.classList.remove('is-entering');
+          panels.style.minHeight = '';
+        }, SWITCH_MS);
+
+        initCarousel(btn.dataset.tnBtn);
+        syncScroll(btn.dataset.tnBtn);
+        staggerCards(entering);
+      });
+    });
+  }
 
   function initCarousel(pid) {
-    var track  = document.getElementById('tn-track-' + pid);
+    var track = document.getElementById('tn-track-' + pid);
     var progEl = qs('[data-tn-prog="' + pid + '"]');
-    var curEl  = qs('[data-tn-cur="'  + pid + '"]');
-    var totEl  = qs('[data-tn-tot="'  + pid + '"]');
+    var curEl = qs('[data-tn-cur="' + pid + '"]');
+    var totEl = qs('[data-tn-tot="' + pid + '"]');
+    var cards;
+    var sx = 0;
+    var scrollTimer;
+
     if (!track) return;
 
-    var cards = qsa('[data-product-card]', track);
+    cards = qsa('[data-product-card]', track);
     if (!cards.length) return;
 
+    if (!CAR[pid]) {
+      CAR[pid] = {
+        track: track,
+        progEl: progEl,
+        curEl: curEl,
+        totEl: totEl,
+        cards: cards
+      };
+
+      track.addEventListener('scroll', function() {
+        window.clearTimeout(scrollTimer);
+        scrollTimer = window.setTimeout(function() {
+          syncScroll(pid);
+        }, 40);
+      }, { passive: true });
+
+      track.addEventListener('touchstart', function(e) {
+        sx = e.touches[0].clientX;
+      }, { passive: true });
+
+      track.addEventListener('touchend', function(e) {
+        var dx = e.changedTouches[0].clientX - sx;
+        var cardWidth;
+
+        if (Math.abs(dx) <= 44) return;
+        cardWidth = cards[0] ? cards[0].getBoundingClientRect().width : 100;
+        track.scrollBy({ left: (dx < 0 ? 1 : -1) * cardWidth, behavior: 'smooth' });
+      }, { passive: true });
+    } else {
+      CAR[pid].track = track;
+      CAR[pid].progEl = progEl;
+      CAR[pid].curEl = curEl;
+      CAR[pid].totEl = totEl;
+      CAR[pid].cards = cards;
+    }
+
     if (totEl) totEl.textContent = cards.length;
-    if (curEl) curEl.textContent = '1';
-
-    if (CAR[pid]) return; // already bound scroll listener
-    CAR[pid] = { track: track, progEl: progEl, curEl: curEl, totEl: totEl, cards: cards };
-
-    var t;
-    track.addEventListener('scroll', function() {
-      clearTimeout(t);
-      t = setTimeout(function() { syncScroll(pid); }, 40);
-    }, { passive: true });
-
-    /* Touch swipe */
-    var sx = 0;
-    track.addEventListener('touchstart', function(e) { sx = e.touches[0].clientX; }, { passive: true });
-    track.addEventListener('touchend', function(e) {
-      var dx = e.changedTouches[0].clientX - sx;
-      if (Math.abs(dx) > 44) {
-        var cw = cards[0] ? cards[0].getBoundingClientRect().width + getGap(pid) : 0;
-        track.scrollBy({ left: (dx < 0 ? 1 : -1) * cw, behavior: 'smooth' });
-      }
-    }, { passive: true });
+    syncScroll(pid);
   }
 
   function getGap(pid) {
     var c = CAR[pid];
-    if (!c) return 0;
-    return parseFloat(getComputedStyle(c.track).columnGap || 0) || 0;
+    return c ? (parseFloat(getComputedStyle(c.track).columnGap || 0) || 0) : 0;
   }
 
   function syncScroll(pid) {
     var c = CAR[pid];
+    var maxScroll;
+    var editorial;
+    var editorialWidth;
+    var cardWidth;
+    var productScroll;
+    var idx;
+
     if (!c) return;
 
-    /* Progress bar: 0–100% of total scrollable range */
-    var maxScroll = c.track.scrollWidth - c.track.clientWidth;
-    var pct = maxScroll > 0 ? Math.min(100, c.track.scrollLeft / maxScroll * 100) : 0;
-    if (c.progEl) c.progEl.style.width = pct + '%';
-
-    /* Counter: which product card is leading the viewport */
-    if (c.cards.length > 0) {
-      var editorial = c.track.querySelector('.tn__editorial');
-      var editW = editorial ? editorial.getBoundingClientRect().width + getGap(pid) : 0;
-      var cw = c.cards[0].getBoundingClientRect().width + getGap(pid);
-      var prodScroll = Math.max(0, c.track.scrollLeft - editW);
-      var idx = Math.min(Math.round(prodScroll / cw), c.cards.length - 1);
-      if (c.curEl) c.curEl.textContent = idx + 1;
+    maxScroll = c.track.scrollWidth - c.track.clientWidth;
+    if (c.progEl) {
+      c.progEl.style.width = (maxScroll > 0 ? Math.min(100, c.track.scrollLeft / maxScroll * 100) : 0) + '%';
     }
+
+    if (!c.cards.length || !c.curEl) return;
+
+    editorial = c.track.querySelector('.tn__editorial');
+    editorialWidth = editorial ? editorial.getBoundingClientRect().width + getGap(pid) : 0;
+    cardWidth = c.cards[0].getBoundingClientRect().width + getGap(pid);
+    productScroll = Math.max(0, c.track.scrollLeft - editorialWidth);
+    idx = Math.min(Math.round(productScroll / cardWidth), c.cards.length - 1);
+    c.curEl.textContent = idx + 1;
   }
 
-  /* ─────────────────────────────────────────
-     COLOR SWATCH TOGGLE + IMAGE SWAP
-  ───────────────────────────────────────── */
   ROOT.addEventListener('click', function(e) {
-
-    /* Toggle swatch panel */
     var toggleBtn = e.target.closest('[data-swatch-toggle]');
+    var swatch;
+    var swatches;
+    var primary;
+
     if (toggleBtn) {
-      var wrap = toggleBtn.closest('.tn-card__colors-wrap');
-      if (!wrap) return;
-      var swatches = wrap.querySelector('.tn-card__swatches');
+      swatches = toggleBtn.closest('.tn-card__colors-wrap');
       if (!swatches) return;
-      var isOpen = toggleBtn.getAttribute('aria-expanded') === 'true';
-      toggleBtn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
-      swatches.hidden = isOpen;
+      swatches = swatches.querySelector('.tn-card__swatches');
+      if (!swatches) return;
+      toggleBtn.setAttribute('aria-expanded', toggleBtn.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');
+      swatches.hidden = !swatches.hidden;
       return;
     }
 
-    /* Swatch click → swap primary image */
-    var swatch = e.target.closest('.tn-card__swatch');
-    if (swatch) {
-      var card = swatch.closest('.tn-card');
-      if (!card) return;
-      var imgSrc = swatch.dataset.swatchImg;
-      if (!imgSrc || imgSrc === 'null' || imgSrc === '') return;
-      var primary = card.querySelector('.tn-card__img--primary');
-      if (primary) primary.src = imgSrc;
-      swatch.closest('.tn-card__swatches').querySelectorAll('.tn-card__swatch').forEach(function(s) {
-        s.classList.remove('is-active');
-      });
-      swatch.classList.add('is-active');
+    swatch = e.target.closest('.tn-card__swatch');
+    if (!swatch) return;
+
+    primary = swatch.closest('.tn-card').querySelector('.tn-card__img--primary');
+    if (primary && swatch.dataset.swatchImg) {
+      primary.src = swatch.dataset.swatchImg;
     }
+
+    swatch.closest('.tn-card__swatches').querySelectorAll('.tn-card__swatch').forEach(function(other) {
+      other.classList.remove('is-active');
+    });
+    swatch.classList.add('is-active');
   });
 
-  /* ── Init first panel ── */
+  bindTabs();
+
   var first = qs('[data-tn-panel].is-active');
   if (first) {
-    var fpid = first.dataset.tnPanel;
-    initCarousel(fpid);
-    staggerIn(first);
+    initCarousel(first.dataset.tnPanel);
+    staggerCards(first);
   }
 
-  /* ── Re-sync on resize ── */
-  var rt;
+  var resizeTimer;
   window.addEventListener('resize', function() {
-    clearTimeout(rt);
-    rt = setTimeout(function() {
-      Object.keys(CAR).forEach(function(pid) { syncScroll(pid); });
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(function() {
+      Object.keys(CAR).forEach(syncScroll);
     }, 200);
   });
 })();
@@ -431,7 +486,7 @@
     {
       "type": "text",
       "id": "editorial_alt",
-      "label": "Default editorial image alt text",
+      "label": "Default editorial alt text",
       "default": "Featured athlete"
     },
     {
@@ -468,7 +523,7 @@
         {
           "type": "text",
           "id": "editorial_alt",
-          "label": "Editorial image alt text"
+          "label": "Editorial alt text"
         }
       ]
     }
