@@ -74,18 +74,19 @@
 
       <!-- Actions -->
       <div class="site-header__actions">
-        <a href="{{ routes.search_url }}" class="header-icon-btn" aria-label="Search">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Search toggle -->
+        <button class="header-icon-btn" id="search-toggle" aria-label="Search" aria-expanded="false" aria-controls="header-search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
-        </a>
+        </button>
         <a href="{{ routes.account_url }}" class="header-icon-btn" aria-label="Account">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
           </svg>
         </a>
         <button class="header-icon-btn" id="cart-toggle" aria-label="Cart" aria-expanded="false" aria-controls="cart-drawer">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
           </svg>
           <span class="cart-count" id="cart-count" data-count="{{ cart.item_count }}">{{ cart.item_count }}</span>
@@ -100,6 +101,31 @@
     </div>
   </div>
 </header>
+
+<!-- ── Search Overlay ── -->
+<div class="header-search" id="header-search" aria-hidden="true">
+  <div class="container">
+    <form action="{{ routes.search_url }}" method="get" class="header-search__form" role="search">
+      <svg class="header-search__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input
+        type="search"
+        name="q"
+        id="header-search-input"
+        class="header-search__input"
+        placeholder="Search for gloves, bags, apparel..."
+        autocomplete="off"
+        aria-label="Search"
+      >
+      <button type="button" class="header-search__close" id="search-close" aria-label="Close search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </form>
+  </div>
+</div>
 
 <!-- Mobile Nav -->
 <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" aria-hidden="true">

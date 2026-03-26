@@ -26,7 +26,45 @@
   }
 
   /* ================================================================
-     1. MOBILE NAVIGATION
+     1. SEARCH OVERLAY
+  ================================================================ */
+  const searchToggle = qs('#search-toggle');
+  const searchClose = qs('#search-close');
+  const headerSearch = qs('#header-search');
+  const searchInput = qs('#header-search-input');
+
+  function openSearch() {
+    if (!headerSearch) return;
+    headerSearch.classList.add('is-open');
+    headerSearch.setAttribute('aria-hidden', 'false');
+    searchToggle && searchToggle.setAttribute('aria-expanded', 'true');
+    setTimeout(() => searchInput && searchInput.focus(), 280);
+  }
+
+  function closeSearch() {
+    if (!headerSearch) return;
+    headerSearch.classList.remove('is-open');
+    headerSearch.setAttribute('aria-hidden', 'true');
+    searchToggle && searchToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  if (searchToggle) {
+    searchToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      headerSearch.classList.contains('is-open') ? closeSearch() : openSearch();
+    });
+  }
+  if (searchClose) {
+    searchClose.addEventListener('click', closeSearch);
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && headerSearch && headerSearch.classList.contains('is-open')) {
+      closeSearch();
+    }
+  });
+
+  /* ================================================================
+     2. MOBILE NAVIGATION
   ================================================================ */
   const mobileToggle = qs('#mobile-menu-toggle');
   const mobileNav = qs('#mobile-nav');
