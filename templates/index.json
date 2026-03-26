@@ -1,29 +1,13 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "hero": {
       "type": "hero-banner",
       "settings": {
         "bg_image": "shopify://shop_images/HD-wallpaper-fight-club-soap-soap-fight-club.jpg",
-        "eyebrow": "Premium Boxing Equipment",
-        "heading": "TRAIN LIKE A CHAMPION",
+        "heading": "BUILT FOR THE FIGHT",
         "subheading": "Premium boxing gear for fighters at every level.",
-        "btn_label": "Shop Now",
-        "btn_url": "",
-        "btn2_label": "View All Gear",
-        "btn2_url": "shopify://collections",
-        "trust_1": "Free Shipping Over $100",
-        "trust_2": "30-Day Easy Returns",
-        "trust_3": "Secure Checkout",
-        "trust_4": "Trusted by 10,000+ Fighters"
+        "btn_label": "SHOP NOW",
+        "btn_url": ""
       }
     },
     "categories": {
@@ -32,45 +16,61 @@
         "cat1": {
           "type": "category",
           "settings": {
-            "collection": "gloves",
-            "label": "GLOVES",
+            "collection": "boxing-gloves",
+            "label": "BOXING GLOVES",
             "url": ""
           }
         },
         "cat2": {
           "type": "category",
           "settings": {
-            "collection": "protective-gear",
-            "label": "PROTECTIVE GEAR",
+            "collection": "punching-bags",
+            "label": "PUNCHING BAGS",
             "url": ""
           }
         },
         "cat3": {
           "type": "category",
           "settings": {
-            "collection": "training-equipment",
-            "label": "TRAINING EQUIPMENT",
+            "collection": "footwear",
+            "label": "ALL FOOTWEAR",
+            "url": ""
+          }
+        },
+        "cat4": {
+          "type": "category",
+          "settings": {
+            "collection": "mens-clothing",
+            "label": "MENS CLOTHING",
+            "url": ""
+          }
+        },
+        "cat5": {
+          "type": "category",
+          "settings": {
+            "collection": "womens-clothing",
+            "label": "WOMENS CLOTHING",
+            "url": ""
+          }
+        },
+        "cat6": {
+          "type": "category",
+          "settings": {
+            "collection": "training-fitness",
+            "label": "TRAINING & FITNESS",
             "url": ""
           }
         }
       },
-      "block_order": [
-        "cat1",
-        "cat2",
-        "cat3"
-      ],
-      "settings": {
-        "eyebrow": "Collections",
-        "heading": "Shop By Category",
-        "subheading": "Lead with your real Shopify collections so merchandising stays accurate and low-maintenance."
-      }
+      "block_order": ["cat1", "cat2", "cat3", "cat4", "cat5", "cat6"],
+      "settings": {}
     },
     "featured_products": {
       "type": "featured-products",
       "settings": {
         "eyebrow": "Featured Products",
         "heading": "Frontline Picks",
-        "subheading": "Equipement you need, we have it.",
+        "subheading": "Equipment you need, we have it.",
         "collection": "all",
         "show_quick_add": true,
         "show_view_all": true,
