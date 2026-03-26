@@ -10,6 +10,7 @@
         <button
           class="tn__tab{% if forloop.first %} is-active{% endif %}"
           data-tn-btn="{{ section_id }}-{{ forloop.index0 }}"
+          data-tn-index="{{ forloop.index0 }}"
           type="button"
           {{ block.shopify_attributes }}
         >{{ block.settings.label | default: 'Tab' }}</button>
@@ -45,6 +46,7 @@
       <div
         class="tn__panel{% if is_first %} is-active{% endif %}"
         data-tn-panel="{{ pid }}"
+        data-tn-index="{{ forloop.index0 }}"
         aria-hidden="{% unless is_first %}true{% endunless %}"
       >
         <div class="tn__track" id="tn-track-{{ pid }}">
@@ -263,8 +265,9 @@
   var ROOT = document.getElementById('tn-{{ section_id }}');
   if (!ROOT) return;
 
-  var SWITCH_MS = 420;
+  var SWITCH_MS = 560;
   var CAR = {};
+  var isSwitching = false;
 
   function qs(sel, ctx) {
     return (ctx || ROOT).querySelector(sel);
@@ -291,46 +294,73 @@
     });
   }
 
+  function lockPanelHeight(panels, fromHeight, toHeight) {
+    panels.style.height = fromHeight + 'px';
+    void panels.offsetHeight;
+    panels.style.height = toHeight + 'px';
+  }
+
+  function unlockPanelHeight(panels) {
+    panels.style.height = '';
+  }
+
+  function setPanelDirection(panel, value, name) {
+    panel.style.setProperty(name, value);
+  }
+
   function bindTabs() {
     qsa('[data-tn-btn]').forEach(function(btn) {
       btn.addEventListener('click', function() {
-        if (btn.classList.contains('is-active')) return;
+        var panels;
+        var entering;
+        var leaving;
+        var currentIndex;
+        var nextIndex;
+        var direction;
+
+        if (btn.classList.contains('is-active') || isSwitching) return;
 
         qsa('[data-tn-btn]').forEach(function(otherBtn) {
           otherBtn.classList.remove('is-active');
         });
         btn.classList.add('is-active');
 
-        var panels = qs('.tn__panels');
-        var entering = qs('[data-tn-panel="' + btn.dataset.tnBtn + '"]');
-        var leaving = qs('[data-tn-panel].is-active');
+        panels = qs('.tn__panels');
+        entering = qs('[data-tn-panel="' + btn.dataset.tnBtn + '"]');
+        leaving = qs('[data-tn-panel].is-active');
         if (!entering || entering === leaving) return;
+
+        currentIndex = leaving ? parseInt(leaving.dataset.tnIndex, 10) : 0;
+        nextIndex = parseInt(btn.dataset.tnIndex, 10);
+        direction = nextIndex > currentIndex ? 1 : -1;
+        isSwitching = true;
+
+        setPanelDirection(entering, (direction * 48) + 'px', '--tn-enter-x');
+        setPanelDirection(leaving || entering, (direction * -32) + 'px', '--tn-leave-x');
+
+        entering.classList.remove('is-leaving', 'is-entering');
+        entering.classList.add('is-active');
+        entering.setAttribute('aria-hidden', 'false');
+
+        initCarousel(btn.dataset.tnBtn);
+        syncScroll(btn.dataset.tnBtn);
+        lockPanelHeight(panels, leaving ? leaving.offsetHeight : entering.offsetHeight, entering.offsetHeight);
 
         if (leaving) {
           leaving.classList.remove('is-active', 'is-entering');
           leaving.classList.add('is-leaving');
           leaving.setAttribute('aria-hidden', 'true');
-          window.setTimeout(function() {
-            leaving.classList.remove('is-leaving');
-          }, SWITCH_MS);
         }
-
-        entering.classList.remove('is-leaving', 'is-entering');
-        entering.classList.add('is-active');
-        entering.setAttribute('aria-hidden', 'false');
-        panels.style.minHeight = Math.max(leaving ? leaving.offsetHeight : 0, entering.offsetHeight) + 'px';
 
         void entering.offsetWidth;
         entering.classList.add('is-entering');
 
         window.setTimeout(function() {
+          if (leaving) leaving.classList.remove('is-leaving');
           entering.classList.remove('is-entering');
-          panels.style.minHeight = '';
+          unlockPanelHeight(panels);
+          isSwitching = false;
         }, SWITCH_MS);
-
-        initCarousel(btn.dataset.tnBtn);
-        syncScroll(btn.dataset.tnBtn);
-        staggerCards(entering);
       });
     });
   }
