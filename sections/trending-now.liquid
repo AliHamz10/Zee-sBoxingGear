@@ -248,11 +248,11 @@
         </div>
 
         <div class="tn__nav">
-          <div class="tn__progress-wrap">
-            <div class="tn__progress-bar" data-tn-prog="{{ pid }}"></div>
-          </div>
-          <p class="tn__counter">
-            <span data-tn-cur="{{ pid }}">1</span>&nbsp;/&nbsp;<span data-tn-tot="{{ pid }}">1</span>
+          <div class="tn__segments" data-tn-segments="{{ pid }}" aria-label="Product pagination"></div>
+          <p class="tn__counter" aria-label="Current product position">
+            <span class="tn__counter-current" data-tn-cur="{{ pid }}">1</span>
+            <span class="tn__counter-slash" aria-hidden="true">/</span>
+            <span class="tn__counter-total" data-tn-tot="{{ pid }}">1</span>
           </p>
         </div>
       </div>
@@ -275,6 +275,10 @@
 
   function qsa(sel, ctx) {
     return Array.prototype.slice.call((ctx || ROOT).querySelectorAll(sel));
+  }
+
+  function formatCount(value) {
+    return String(Math.max(0, value));
   }
 
   function staggerCards(panel) {
@@ -365,9 +369,51 @@
     });
   }
 
+  function goToProduct(pid, idx) {
+    var c = CAR[pid];
+    var editorial;
+    var editorialWidth;
+    var cardWidth;
+    var left;
+
+    if (!c || !c.cards.length) return;
+
+    idx = Math.max(0, Math.min(idx, c.cards.length - 1));
+    editorial = c.track.querySelector('.tn__editorial');
+    editorialWidth = editorial ? editorial.getBoundingClientRect().width + getGap(pid) : 0;
+    cardWidth = c.cards[0].getBoundingClientRect().width + getGap(pid);
+    left = editorialWidth + (idx * cardWidth);
+    c.track.scrollTo({ left: left, behavior: 'smooth' });
+  }
+
+  function buildSegments(pid) {
+    var c = CAR[pid];
+    var segsEl;
+
+    if (!c) return;
+
+    segsEl = qs('[data-tn-segments="' + pid + '"]');
+    if (!segsEl) return;
+
+    if (segsEl.children.length !== c.cards.length) {
+      segsEl.innerHTML = '';
+      c.cards.forEach(function(card, index) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'tn__segment';
+        btn.setAttribute('aria-label', 'Go to product ' + (index + 1));
+        btn.addEventListener('click', function() {
+          goToProduct(pid, index);
+        });
+        segsEl.appendChild(btn);
+      });
+    }
+
+    c.segsEl = segsEl;
+  }
+
   function initCarousel(pid) {
     var track = document.getElementById('tn-track-' + pid);
-    var progEl = qs('[data-tn-prog="' + pid + '"]');
     var curEl = qs('[data-tn-cur="' + pid + '"]');
     var totEl = qs('[data-tn-tot="' + pid + '"]');
     var cards;
@@ -382,10 +428,10 @@
     if (!CAR[pid]) {
       CAR[pid] = {
         track: track,
-        progEl: progEl,
         curEl: curEl,
         totEl: totEl,
-        cards: cards
+        cards: cards,
+        segsEl: null
       };
 
       track.addEventListener('scroll', function() {
@@ -409,13 +455,13 @@
       }, { passive: true });
     } else {
       CAR[pid].track = track;
-      CAR[pid].progEl = progEl;
       CAR[pid].curEl = curEl;
       CAR[pid].totEl = totEl;
       CAR[pid].cards = cards;
     }
 
-    if (totEl) totEl.textContent = cards.length;
+    buildSegments(pid);
+    if (totEl) totEl.textContent = formatCount(cards.length);
     syncScroll(pid);
   }
 
@@ -426,19 +472,14 @@
 
   function syncScroll(pid) {
     var c = CAR[pid];
-    var maxScroll;
     var editorial;
     var editorialWidth;
     var cardWidth;
     var productScroll;
     var idx;
+    var segments;
 
     if (!c) return;
-
-    maxScroll = c.track.scrollWidth - c.track.clientWidth;
-    if (c.progEl) {
-      c.progEl.style.width = (maxScroll > 0 ? Math.min(100, c.track.scrollLeft / maxScroll * 100) : 0) + '%';
-    }
 
     if (!c.cards.length || !c.curEl) return;
 
@@ -447,7 +488,13 @@
     cardWidth = c.cards[0].getBoundingClientRect().width + getGap(pid);
     productScroll = Math.max(0, c.track.scrollLeft - editorialWidth);
     idx = Math.min(Math.round(productScroll / cardWidth), c.cards.length - 1);
-    c.curEl.textContent = idx + 1;
+    c.curEl.textContent = formatCount(idx + 1);
+
+    segments = c.segsEl ? qsa('.tn__segment', c.segsEl) : [];
+    segments.forEach(function(segment, segmentIndex) {
+      segment.classList.toggle('is-active', segmentIndex === idx);
+      segment.setAttribute('aria-current', segmentIndex === idx ? 'true' : 'false');
+    });
   }
 
   ROOT.addEventListener('click', function(e) {
