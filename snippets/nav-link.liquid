@@ -33,6 +33,19 @@
   if link_title == 'Sale' or link_title == 'SALE'
     assign link_classes = link_classes | append: ' ' | append: sale_class
   endif
+
+  comment
+    Detect mega menu: top-level item whose children also have children
+  endcomment
+  assign has_mega = false
+  if nav_link.links != blank and is_mobile == false
+    for col in nav_link.links
+      if col.links != blank
+        assign has_mega = true
+        break
+      endif
+    endfor
+  endif
 %}
 
 {% if is_mobile %}
@@ -43,11 +56,47 @@
       <a href="{{ child.url }}" class="mobile-nav__link mobile-nav__link--child {% if child.current %}is-active{% endif %}">
         {{ child.title }}
       </a>
+      {% if child.links != blank %}
+        {% for grandchild in child.links %}
+          <a href="{{ grandchild.url }}" class="mobile-nav__link mobile-nav__link--grandchild {% if grandchild.current %}is-active{% endif %}">
+            {{ grandchild.title }}
+          </a>
+        {% endfor %}
+      {% endif %}
     {% endfor %}
   {% endif %}
 
+{% elsif has_mega %}
+  {% comment %}── Desktop: mega menu with column headers ──{% endcomment %}
+  <div class="site-nav__item site-nav__item--has-mega">
+    <a href="{{ link_url }}" class="{{ link_classes | strip }}">
+      {{ link_title }}
+      <svg class="site-nav__chevron" width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+        <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+    <div class="mega-menu" role="region">
+      <div class="container">
+        <div class="mega-menu__grid">
+          {% for col in nav_link.links %}
+            <div class="mega-menu__col">
+              <a href="{{ col.url }}" class="mega-menu__heading">{{ col.title }}</a>
+              {% if col.links != blank %}
+                {% for item in col.links %}
+                  <a href="{{ item.url }}" class="mega-menu__link {% if item.current %}is-active{% endif %}">
+                    {{ item.title }}
+                  </a>
+                {% endfor %}
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
 {% elsif nav_link.links != blank %}
-  {% comment %}── Desktop: dropdown wrapper ──{% endcomment %}
+  {% comment %}── Desktop: simple dropdown (2 levels) ──{% endcomment %}
   <div class="site-nav__item site-nav__item--has-dropdown">
     <a href="{{ link_url }}" class="{{ link_classes | strip }}">
       {{ link_title }}
