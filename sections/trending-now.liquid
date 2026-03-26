@@ -1,0 +1,397 @@
+{% liquid
+  assign section_id = section.id
+%}
+
+<section class="tn" id="tn-{{ section_id }}">
+
+  {%- comment -%} ── Header: full-width, dark bg ── {%- endcomment -%}
+  <div class="tn__header">
+    <h2 class="tn__title">{{ section.settings.heading | default: 'TRENDING NOW' }}</h2>
+    <nav class="tn__tabs" aria-label="Product filter tabs">
+      {% for block in section.blocks %}
+        <button
+          class="tn__tab{% if forloop.first %} is-active{% endif %}"
+          data-tn-btn="{{ section_id }}-{{ forloop.index0 }}"
+          type="button"
+          {{ block.shopify_attributes }}
+        >{{ block.settings.label | default: 'Tab' }}</button>
+      {% endfor %}
+    </nav>
+  </div>
+
+  {%- comment -%} ── Panels (full-bleed) ── {%- endcomment -%}
+  <div class="tn__panels">
+    {% for block in section.blocks %}
+      {% liquid
+        assign col     = blank
+        assign col_str = block.settings.collection
+        if col_str != blank
+          assign col = collections[col_str]
+        endif
+        assign pid      = section_id | append: '-' | append: forloop.index0
+        assign is_first = forloop.first
+      %}
+
+      <div
+        class="tn__panel{% if is_first %} is-active{% endif %}"
+        data-tn-panel="{{ pid }}"
+        aria-hidden="{% unless is_first %}true{% endunless %}"
+      >
+        <div class="tn__stage">
+
+          {%- comment -%} Left editorial sliver {%- endcomment -%}
+          {% assign edit_img = block.settings.editorial_image %}
+          {% if edit_img == blank %}
+            {% assign edit_img = section.settings.editorial_image %}
+          {% endif %}
+
+          <div class="tn__editorial">
+            {% if edit_img %}
+              <img
+                src="{{ edit_img | image_url: width: 400 }}"
+                alt="{{ block.settings.editorial_alt | default: section.settings.editorial_alt | escape }}"
+                width="400"
+                height="640"
+                loading="lazy"
+              >
+            {% else %}
+              <div class="tn__editorial-fallback">
+                {{ 'collection-apparel-1' | placeholder_svg_tag: 'tn__editorial-svg' }}
+              </div>
+            {% endif %}
+          </div>
+
+          {%- comment -%} Scrollable product track {%- endcomment -%}
+          <div class="tn__track" id="tn-track-{{ pid }}">
+
+            {% if col != blank and col.products_count > 0 %}
+              {% for product in col.products limit: section.settings.products_per_tab %}
+                {% liquid
+                  assign is_sale      = false
+                  assign color_count  = 0
+                  if product.compare_at_price_max > product.price
+                    assign is_sale = true
+                  endif
+                  for o in product.options_with_values
+                    assign o_name = o.name | downcase
+                    if o_name == 'color' or o_name == 'colour'
+                      assign color_count = o.values.size
+                      break
+                    endif
+                  endfor
+                %}
+                <article class="tn-card">
+                  <a href="{{ product.url }}" class="tn-card__media" tabindex="-1" aria-hidden="true">
+                    {% if is_sale %}
+                      <span class="tn-card__badge">Sale</span>
+                    {% endif %}
+                    {% if product.featured_image %}
+                      <img
+                        class="tn-card__img"
+                        src="{{ product.featured_image | image_url: width: 600 }}"
+                        alt="{{ product.featured_image.alt | escape | default: product.title }}"
+                        width="600"
+                        height="600"
+                        loading="lazy"
+                      >
+                    {% else %}
+                      <div class="tn-card__no-img">
+                        {{ 'product-1' | placeholder_svg_tag: 'tn-card__svg' }}
+                      </div>
+                    {% endif %}
+                  </a>
+
+                  <div class="tn-card__info">
+                    <h3 class="tn-card__name">
+                      <a href="{{ product.url }}">{{ product.title }}</a>
+                    </h3>
+
+                    <p class="tn-card__price">
+                      {% if is_sale %}
+                        <s class="tn-card__was">{{ product.compare_at_price_max | money }}</s>
+                        <span class="tn-card__now">{{ product.price | money }}</span>
+                      {% else %}
+                        <span class="tn-card__now tn-card__now--regular">{{ product.price | money }}</span>
+                      {% endif %}
+                    </p>
+
+                    {% if color_count > 0 %}
+                      <button class="tn-card__colors" type="button">
+                        {{ color_count }}&nbsp;Color{% if color_count > 1 %}s{% endif %}
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                      </button>
+                    {% endif %}
+
+                    <div class="tn-card__stars" aria-label="Rating">
+                      <span aria-hidden="true">★★★★★</span>
+                    </div>
+                  </div>
+                </article>
+              {% endfor %}
+
+            {% else %}
+              {%- comment -%} Demo placeholder cards {%- endcomment -%}
+              {% assign demo_names = 'Leather Gym Duffel Bag,Elite Boxing Shoes,Pro Training Gloves,Powerlock X-Trainer,Advanced Boxing Glove' | split: ',' %}
+              {% assign demo_prices = '$199.99,$119.99,$199.99,$49.99,$62.99' | split: ',' %}
+              {% assign demo_was = ',$,$,$99.99,$89.99' | split: ',' %}
+              {% for i in (1..5) %}
+                {% assign di = forloop.index0 %}
+                <article class="tn-card tn-card--demo">
+                  <div class="tn-card__media">
+                    {% if i == 4 or i == 5 %}<span class="tn-card__badge">Sale</span>{% endif %}
+                    <div class="tn-card__no-img">
+                      {{ 'product-' | append: i | placeholder_svg_tag: 'tn-card__svg' }}
+                    </div>
+                  </div>
+                  <div class="tn-card__info">
+                    <h3 class="tn-card__name"><a href="#">{{ demo_names[di] }}</a></h3>
+                    <p class="tn-card__price">
+                      {% if demo_was[di] != blank and demo_was[di] != '$' %}
+                        <s class="tn-card__was">{{ demo_was[di] }}</s>
+                        <span class="tn-card__now">{{ demo_prices[di] }}</span>
+                      {% else %}
+                        <span class="tn-card__now tn-card__now--regular">{{ demo_prices[di] }}</span>
+                      {% endif %}
+                    </p>
+                    <button class="tn-card__colors" type="button">
+                      {{ forloop.index | plus: 1 }}&nbsp;Colors
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="tn-card__stars" aria-label="Rating"><span aria-hidden="true">★★★★★</span></div>
+                  </div>
+                </article>
+              {% endfor %}
+            {% endif %}
+
+          </div><!-- /.tn__track -->
+        </div><!-- /.tn__stage -->
+
+        {%- comment -%} ── Dots + counter ── {%- endcomment -%}
+        <div class="tn__nav">
+          <div class="tn__dots" data-tn-dots="{{ pid }}"></div>
+          <p class="tn__counter">
+            <span data-tn-cur="{{ pid }}">1</span>&nbsp;/&nbsp;<span data-tn-tot="{{ pid }}">1</span>
+          </p>
+        </div>
+
+      </div><!-- /.tn__panel -->
+    {% endfor %}
+  </div><!-- /.tn__panels -->
+
+</section>
+
+<script>
+(function () {
+  const ROOT = document.getElementById('tn-{{ section_id }}');
+  if (!ROOT) return;
+
+  /* ── helpers ─────────────────────────────────────────── */
+  const qs  = (sel, ctx) => (ctx || ROOT).querySelector(sel);
+  const qsa = (sel, ctx) => [...(ctx || ROOT).querySelectorAll(sel)];
+
+  /* ── tab switching with fade ─────────────────────────── */
+  qsa('[data-tn-btn]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      qsa('[data-tn-btn]').forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      const pid = btn.dataset.tnBtn;
+      qsa('[data-tn-panel]').forEach(p => {
+        const active = p.dataset.tnPanel === pid;
+        p.classList.toggle('is-active', active);
+        p.setAttribute('aria-hidden', String(!active));
+      });
+      initCarousel(pid);
+    });
+  });
+
+  /* ── carousel ────────────────────────────────────────── */
+  const carousels = {};
+
+  function initCarousel(pid) {
+    const track = document.getElementById('tn-track-' + pid);
+    const dotsEl = qs('[data-tn-dots="' + pid + '"]');
+    const curEl  = qs('[data-tn-cur="' + pid + '"]');
+    const totEl  = qs('[data-tn-tot="' + pid + '"]');
+    if (!track) return;
+
+    const cards = qsa('.tn-card', track);
+    if (!cards.length) return;
+
+    // Already initialised?
+    if (carousels[pid]) { updateDots(pid); return; }
+    carousels[pid] = { track, dotsEl, curEl, totEl, cards, current: 0 };
+
+    buildDots(pid);
+
+    // Scroll sync
+    let t;
+    track.addEventListener('scroll', () => {
+      clearTimeout(t);
+      t = setTimeout(() => syncFromScroll(pid), 60);
+    }, { passive: true });
+
+    // Touch swipe
+    let startX = 0;
+    track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+    track.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 40) {
+        const c = carousels[pid];
+        goTo(pid, dx < 0 ? c.current + 1 : c.current - 1);
+      }
+    }, { passive: true });
+  }
+
+  function cardWidth(pid) {
+    const { track, cards } = carousels[pid];
+    const style = getComputedStyle(track);
+    const gap = parseFloat(style.columnGap || style.gap || 0) || 0;
+    return cards[0].getBoundingClientRect().width + gap;
+  }
+
+  function pageCount(pid) {
+    const { track, cards } = carousels[pid];
+    const visible = Math.max(1, Math.floor(track.offsetWidth / cardWidth(pid)));
+    return Math.max(1, Math.ceil(cards.length / visible));
+  }
+
+  function buildDots(pid) {
+    const { dotsEl, totEl } = carousels[pid];
+    if (!dotsEl) return;
+    const pages = pageCount(pid);
+    totEl && (totEl.textContent = pages);
+    dotsEl.innerHTML = '';
+    for (let i = 0; i < pages; i++) {
+      const d = document.createElement('button');
+      d.type = 'button';
+      d.className = 'tn__dot' + (i === 0 ? ' is-active' : '');
+      d.setAttribute('aria-label', 'Page ' + (i + 1));
+      d.addEventListener('click', () => goTo(pid, i));
+      dotsEl.appendChild(d);
+    }
+  }
+
+  function updateDots(pid) {
+    const { dotsEl } = carousels[pid];
+    if (!dotsEl) return;
+    const pages = pageCount(pid);
+    if (dotsEl.children.length !== pages) buildDots(pid);
+  }
+
+  function goTo(pid, page) {
+    const c = carousels[pid];
+    const pages = pageCount(pid);
+    page = Math.max(0, Math.min(page, pages - 1));
+    c.current = page;
+    const visible = Math.max(1, Math.floor(c.track.offsetWidth / cardWidth(pid)));
+    c.track.scrollTo({ left: page * visible * cardWidth(pid), behavior: 'smooth' });
+    setActiveDot(pid, page);
+  }
+
+  function syncFromScroll(pid) {
+    const c = carousels[pid];
+    const cw = cardWidth(pid);
+    const visible = Math.max(1, Math.floor(c.track.offsetWidth / cw));
+    const page = Math.round(c.track.scrollLeft / (visible * cw));
+    if (page !== c.current) {
+      c.current = page;
+      setActiveDot(pid, page);
+    }
+  }
+
+  function setActiveDot(pid, page) {
+    const { dotsEl, curEl } = carousels[pid];
+    curEl && (curEl.textContent = page + 1);
+    if (!dotsEl) return;
+    [...dotsEl.querySelectorAll('.tn__dot')].forEach((d, i) => {
+      d.classList.toggle('is-active', i === page);
+    });
+  }
+
+  /* ── init first panel ────────────────────────────────── */
+  const firstPanel = qs('[data-tn-panel].is-active');
+  if (firstPanel) initCarousel(firstPanel.dataset.tnPanel);
+
+  /* ── rebuild on resize ───────────────────────────────── */
+  let resizeT;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeT);
+    resizeT = setTimeout(() => {
+      Object.keys(carousels).forEach(pid => updateDots(pid));
+    }, 200);
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Trending Now",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section heading",
+      "default": "TRENDING NOW"
+    },
+    {
+      "type": "image_picker",
+      "id": "editorial_image",
+      "label": "Default editorial image (left sliver)"
+    },
+    {
+      "type": "text",
+      "id": "editorial_alt",
+      "label": "Default editorial image alt text",
+      "default": "Featured athlete"
+    },
+    {
+      "type": "range",
+      "id": "products_per_tab",
+      "label": "Max products per tab",
+      "min": 4,
+      "max": 14,
+      "step": 1,
+      "default": 8
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Tab label",
+          "default": "BEST SELLERS"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "image_picker",
+          "id": "editorial_image",
+          "label": "Editorial image (overrides default)"
+        },
+        {
+          "type": "text",
+          "id": "editorial_alt",
+          "label": "Editorial image alt text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trending Now",
+      "blocks": [
+        { "type": "tab", "settings": { "label": "BEST SELLERS" } },
+        { "type": "tab", "settings": { "label": "BOXING GLOVES" } },
+        { "type": "tab", "settings": { "label": "EQUIPMENT" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
