@@ -97,7 +97,7 @@
   },
   "order": [
     "hero",
-    "categories",
-    "trending_now"
+    "trending_now",
+    "categories"
   ]
 }
