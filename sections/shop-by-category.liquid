@@ -1,6 +1,7 @@
 {% liquid
   assign section_id = section.id
   assign total_blocks = section.blocks | where: 'type', 'category' | size
+  assign demo_imgs = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80,https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80,https://images.unsplash.com/photo-1549476464-37392f717541?w=800&q=80,https://images.unsplash.com/photo-1517438984742-1262db08379e?w=800&q=80' | split: ','
 %}
 
 <section class="sbc" id="sbc-{{ section_id }}">
@@ -52,14 +53,15 @@
                   loading="{% if forloop.index <= 3 %}eager{% else %}lazy{% endif %}"
                 >
               {% else %}
-                <div class="sbc__card-placeholder">
-                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.2" aria-hidden="true">
-                    <rect x="3" y="3" width="18" height="18" rx="1.5"/>
-                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                    <path d="M21 15l-5-5L5 21"/>
-                  </svg>
-                  <span class="sbc__card-placeholder-text">Add Image</span>
-                </div>
+                {% assign demo_src = demo_imgs[forloop.index0] %}
+                <img
+                  src="{{ demo_src }}"
+                  alt="{{ card_label | escape }}"
+                  class="sbc__card-img"
+                  width="800"
+                  height="1000"
+                  loading="{% if forloop.index <= 3 %}eager{% else %}lazy{% endif %}"
+                >
               {% endif %}
             </div>
             <div class="sbc__card-overlay">

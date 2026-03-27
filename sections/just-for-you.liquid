@@ -6,6 +6,7 @@
   endif
   assign products_limit = section.settings.products_count | default: 8
 
+  assign demo_imgs    = 'https://images.unsplash.com/photo-1589924691995-400dc9eee119?w=640&q=80,https://images.unsplash.com/photo-1517438984742-1262db08379e?w=640&q=80,https://images.unsplash.com/photo-1594381898411-846e7d193883?w=640&q=80,https://images.unsplash.com/photo-1549476464-37392f717541?w=640&q=80,https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=640&q=80,https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=640&q=80,https://images.unsplash.com/photo-1605296867304-46d5465a13f1?w=640&q=80,https://images.unsplash.com/photo-1530822847156-5df684ec5ee1?w=640&q=80' | split: ','
   assign demo_names   = 'Pro Sparring Gloves,Speed Bag Platform,Elite Boxing Shoes,Heavy Bag 100 lb,Compression Shorts,Head Guard Pro,Training Mitts,Skipping Rope Pro' | split: ','
   assign demo_prices  = '2999,1999,6299,11899,3499,8999,5499,2499' | split: ','
   assign demo_compare = '9999,0,8999,16999,0,11999,6999,0' | split: ','
@@ -130,9 +131,14 @@
               {% if dc > 0 %}
                 <span class="jfy-card__badge">Sale</span>
               {% endif %}
-              <div class="jfy-card__ph">
-                {{ 'product-' | append: dsvg | placeholder_svg_tag: 'jfy-card__svg' }}
-              </div>
+              <img
+                src="{{ demo_imgs[di] }}"
+                alt="{{ demo_name }}"
+                class="jfy-card__img"
+                width="640"
+                height="640"
+                loading="lazy"
+              >
             </div>
 
             <div class="jfy-card__info">
