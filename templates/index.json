@@ -55,6 +55,14 @@
         "heading": "SHOP BY CATEGORY"
       }
     },
+    "just_for_you": {
+      "type": "just-for-you",
+      "settings": {
+        "heading": "JUST FOR YOU",
+        "collection": "all",
+        "products_count": 8
+      }
+    },
     "trending_now": {
       "type": "trending-now",
       "blocks": {
@@ -98,6 +106,7 @@
   "order": [
     "hero",
     "trending_now",
+    "just_for_you",
     "categories"
   ]
 }

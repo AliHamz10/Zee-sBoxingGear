@@ -1,0 +1,296 @@
+{% liquid
+  assign section_id = section.id
+  assign col = blank
+  if section.settings.collection != blank
+    assign col = collections[section.settings.collection]
+  endif
+  assign products_limit = section.settings.products_count | default: 8
+
+  assign demo_names   = 'Pro Sparring Gloves,Speed Bag Platform,Elite Boxing Shoes,Heavy Bag 100 lb,Compression Shorts,Head Guard Pro,Training Mitts,Skipping Rope Pro' | split: ','
+  assign demo_prices  = '19999,11999,12999,18999,3499,8999,5499,2499' | split: ','
+  assign demo_compare = '24999,0,16999,22999,0,11999,6999,0' | split: ','
+  assign demo_colors  = '4,0,3,2,5,0,2,4' | split: ','
+  assign demo_ratings = '4,5,5,4,5,4,5,5' | split: ','
+  assign demo_reviews = '26,0,7,1,12,0,9,3' | split: ','
+  assign demo_svgs    = '1,2,3,4,5,6,1,2' | split: ','
+
+  assign total_count = 0
+  if col != blank and col.products_count > 0
+    assign total_count = col.products_count
+    if total_count > products_limit
+      assign total_count = products_limit
+    endif
+  else
+    assign total_count = products_limit
+  endif
+%}
+
+<section class="jfy" id="jfy-{{ section_id }}">
+  <div class="jfy__header">
+    <h2 class="jfy__title">{{ section.settings.heading | default: 'JUST FOR YOU' }}</h2>
+  </div>
+
+  <div class="jfy__viewport">
+    <div class="jfy__track" id="jfy-track-{{ section_id }}">
+
+      {% if col != blank and col.products_count > 0 %}
+        {% for product in col.products limit: products_limit %}
+          {% liquid
+            assign is_sale = false
+            if product.compare_at_price_max > product.price
+              assign is_sale = true
+            endif
+
+            assign color_count = 0
+            assign color_opt_idx = nil
+            assign opt_i = 0
+            for opt_name in product.options
+              assign opt_lower = opt_name | downcase
+              if opt_lower == 'color' or opt_lower == 'colour'
+                assign color_opt_idx = opt_i
+              endif
+              assign opt_i = opt_i | plus: 1
+            endfor
+            for ov in product.options_with_values
+              assign o_name = ov.name | downcase
+              if o_name == 'color' or o_name == 'colour'
+                assign color_count = ov.values.size
+                break
+              endif
+            endfor
+          %}
+
+          <article class="jfy-card" data-jfy-card="{{ forloop.index0 }}">
+            <a href="{{ product.url }}" class="jfy-card__media">
+              {% if is_sale %}
+                <span class="jfy-card__badge">Sale</span>
+              {% endif %}
+              {% if product.featured_image %}
+                <img
+                  src="{{ product.featured_image | image_url: width: 640 }}"
+                  alt="{{ product.featured_image.alt | escape | default: product.title }}"
+                  class="jfy-card__img"
+                  width="640"
+                  height="640"
+                  loading="{{ forloop.index | plus: 0 | modulo: 5 | at_most: 1 | at_least: 0 | times: 0 | plus: forloop.index <= 4 ? 'eager' : 'lazy' }}"
+                >
+              {% else %}
+                <div class="jfy-card__ph">
+                  {{ 'product-1' | placeholder_svg_tag: 'jfy-card__svg' }}
+                </div>
+              {% endif %}
+            </a>
+
+            <div class="jfy-card__info">
+              <h3 class="jfy-card__name">
+                <a href="{{ product.url }}">{{ product.title }}</a>
+              </h3>
+
+              <p class="jfy-card__price">
+                {% if is_sale %}
+                  <s class="jfy-card__was">{{ product.compare_at_price_max | money }}</s>
+                  <span class="jfy-card__now jfy-card__now--sale">FROM {{ product.price | money }}</span>
+                {% else %}
+                  <span class="jfy-card__now">{{ product.price | money }}</span>
+                {% endif %}
+              </p>
+
+              {% if color_count > 0 and color_opt_idx != nil %}
+                <button class="jfy-card__colors" type="button">
+                  {{ color_count }} Color{% if color_count != 1 %}s{% endif %}
+                  <svg class="jfy-card__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+              {% endif %}
+
+              <div class="jfy-card__stars" aria-label="Rating">
+                <span class="jfy-card__stars-icons" aria-hidden="true">★★★★★</span>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+
+      {% else %}
+        {% comment %} Demo placeholders {% endcomment %}
+        {% for demo_name in demo_names limit: products_limit %}
+          {% liquid
+            assign di = forloop.index0
+            assign dp = demo_prices[di] | plus: 0
+            assign dc = demo_compare[di] | plus: 0
+            assign dcolors = demo_colors[di] | plus: 0
+            assign drating = demo_ratings[di] | plus: 0
+            assign dreviews = demo_reviews[di] | plus: 0
+            assign dsvg = demo_svgs[di]
+          %}
+
+          <article class="jfy-card" data-jfy-card="{{ forloop.index0 }}">
+            <div class="jfy-card__media">
+              {% if dc > 0 %}
+                <span class="jfy-card__badge">Sale</span>
+              {% endif %}
+              <div class="jfy-card__ph">
+                {{ 'product-' | append: dsvg | placeholder_svg_tag: 'jfy-card__svg' }}
+              </div>
+            </div>
+
+            <div class="jfy-card__info">
+              <h3 class="jfy-card__name"><span>{{ demo_name }}</span></h3>
+
+              <p class="jfy-card__price">
+                {% if dc > 0 %}
+                  <s class="jfy-card__was">{{ dc | money }}</s>
+                  <span class="jfy-card__now jfy-card__now--sale">FROM {{ dp | money }}</span>
+                {% else %}
+                  <span class="jfy-card__now">{{ dp | money }}</span>
+                {% endif %}
+              </p>
+
+              {% if dcolors > 0 %}
+                <button class="jfy-card__colors" type="button">
+                  {{ dcolors }} Color{% if dcolors != 1 %}s{% endif %}
+                  <svg class="jfy-card__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+              {% endif %}
+
+              {% if dreviews > 0 %}
+                <div class="jfy-card__stars" aria-label="{{ drating }} out of 5 stars, {{ dreviews }} reviews">
+                  <span class="jfy-card__stars-icons" aria-hidden="true">
+                    {%- for i in (1..5) -%}
+                      {%- if i <= drating -%}★{%- else -%}☆{%- endif -%}
+                    {%- endfor -%}
+                  </span>
+                  <span class="jfy-card__stars-count">({{ dreviews }})</span>
+                </div>
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      {% endif %}
+
+    </div>
+  </div>
+
+  <div class="jfy__footer" id="jfy-footer-{{ section_id }}">
+    <div class="jfy__segments" id="jfy-segs-{{ section_id }}"></div>
+    <span class="jfy__counter" id="jfy-counter-{{ section_id }}">
+      <span class="jfy__counter-cur">1</span>
+      <span> / </span>
+      <span class="jfy__counter-tot">{{ total_count }}</span>
+    </span>
+  </div>
+</section>
+
+<script>
+(function () {
+  var sid = {{ section_id | json }};
+  var track = document.getElementById('jfy-track-' + sid);
+  var segsEl = document.getElementById('jfy-segs-' + sid);
+  var counter = document.getElementById('jfy-counter-' + sid);
+  if (!track) return;
+
+  var cards = Array.from(track.querySelectorAll('[data-jfy-card]'));
+  var total = cards.length;
+  var curIdx = 0;
+  var isScrolling = false;
+  var scrollTimer;
+  var touchStartX = 0;
+
+  // Build segment bars
+  cards.forEach(function (_, i) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'jfy__seg' + (i === 0 ? ' is-active' : '');
+    btn.setAttribute('aria-label', 'Go to product ' + (i + 1));
+    btn.addEventListener('click', function () { scrollTo(i); });
+    segsEl.appendChild(btn);
+  });
+
+  var segs = Array.from(segsEl.querySelectorAll('.jfy__seg'));
+
+  function updateUI(idx) {
+    curIdx = idx;
+    segs.forEach(function (s, i) { s.classList.toggle('is-active', i === idx); });
+    if (counter) {
+      counter.querySelector('.jfy__counter-cur').textContent = idx + 1;
+      counter.querySelector('.jfy__counter-tot').textContent = total;
+    }
+  }
+
+  function scrollTo(idx) {
+    if (!cards[idx]) return;
+    isScrolling = true;
+    track.scrollTo({ left: cards[idx].offsetLeft, behavior: 'smooth' });
+    updateUI(idx);
+    setTimeout(function () { isScrolling = false; }, 600);
+  }
+
+  function getVisible() {
+    var trackLeft = track.getBoundingClientRect().left;
+    var best = 0, bestDist = Infinity;
+    cards.forEach(function (c, i) {
+      var dist = Math.abs(c.getBoundingClientRect().left - trackLeft);
+      if (dist < bestDist) { bestDist = dist; best = i; }
+    });
+    return best;
+  }
+
+  track.addEventListener('scroll', function () {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(function () {
+      if (!isScrolling) updateUI(getVisible());
+    }, 80);
+  }, { passive: true });
+
+  track.addEventListener('touchstart', function (e) {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+  track.addEventListener('touchend', function (e) {
+    var dx = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(dx) > 40) {
+      scrollTo(Math.min(Math.max(curIdx + (dx > 0 ? 1 : -1), 0), total - 1));
+    }
+  }, { passive: true });
+
+  updateUI(0);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Just For You",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "JUST FOR YOU"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_count",
+      "label": "Number of products",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Just For You",
+      "settings": {
+        "heading": "JUST FOR YOU",
+        "products_count": 8
+      }
+    }
+  ]
+}
+{% endschema %}
