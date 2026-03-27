@@ -1,156 +1,127 @@
-<div class="container">
-  <!-- Breadcrumb -->
-  <nav class="breadcrumb" aria-label="Breadcrumb">
-    <a href="{{ routes.root_url }}">Home</a>
-    <span>/</span>
-    <span aria-current="page">Contact &amp; FAQ</span>
-  </nav>
-</div>
-
 <!-- Page Header -->
-<div class="collection-header">
+<div class="pg-hdr">
   <div class="container">
-    <h1>{{ section.settings.heading | default: "Contact & FAQ" }}</h1>
+    <nav class="zbg-breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span>/</span>
+      <span aria-current="page">Contact &amp; FAQ</span>
+    </nav>
+    <h1 class="pg-hdr__title">{{ section.settings.heading | default: 'CONTACT & FAQ' }}</h1>
     {% if section.settings.subheading != blank %}
-      <p>{{ section.settings.subheading }}</p>
+      <p class="pg-hdr__sub">{{ section.settings.subheading }}</p>
+    {% else %}
+      <p class="pg-hdr__sub">We're here to help. Reach out or find your answer below.</p>
     {% endif %}
   </div>
 </div>
 
-<section class="contact-page">
+<section class="cfaq">
   <div class="container">
-    <div class="contact-page__inner">
+    <div class="cfaq__inner">
 
       <!-- Contact Form -->
-      <div>
-        <h2 style="color:var(--color-primary); font-size:1.5rem; margin-bottom:1.5rem;">Send Us a Message</h2>
+      <div class="cfaq__form-col">
+        <h2 class="cfaq__col-title">SEND A MESSAGE</h2>
 
         {% form 'contact', id: 'contact-form' %}
           {% if form.posted_successfully? %}
-            <div class="flash-message flash-message--success">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:1px;">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              {{ 'contact.form.success' | t }}
+            <div class="cfaq__success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              Message sent! We'll get back to you within 24–48 hours.
             </div>
           {% endif %}
 
           {% if form.errors %}
-            <div class="flash-message flash-message--error">
-              {{ form.errors | default_errors }}
-            </div>
+            <div class="cfaq__error">{{ form.errors | default_errors }}</div>
           {% endif %}
 
-          <div class="contact-form">
-            <div class="form-group">
-              <label for="contact-name">{{ 'contact.form.name' | t }} <span style="color:#c0392b;">*</span></label>
-              <input
-                type="text"
-                id="contact-name"
-                name="contact[name]"
-                value="{{ form.name }}"
-                required
-                autocomplete="name"
-              >
+          <div class="cfaq__fields">
+            <div class="cfaq__field">
+              <label for="cfaq-name" class="cfaq__label">Full Name <span aria-hidden="true">*</span></label>
+              <input type="text" id="cfaq-name" name="contact[name]" value="{{ form.name }}" class="cfaq__input" required placeholder="John Doe">
             </div>
 
-            <div class="form-group">
-              <label for="contact-email">{{ 'contact.form.email' | t }} <span style="color:#c0392b;">*</span></label>
-              <input
-                type="email"
-                id="contact-email"
-                name="contact[email]"
-                value="{{ form.email }}"
-                required
-                autocomplete="email"
-              >
+            <div class="cfaq__field">
+              <label for="cfaq-email" class="cfaq__label">Email Address <span aria-hidden="true">*</span></label>
+              <input type="email" id="cfaq-email" name="contact[email]" value="{{ form.email }}" class="cfaq__input" required placeholder="your@email.com">
             </div>
 
-            <div class="form-group">
-              <label for="contact-phone">{{ 'contact.form.phone' | t }}</label>
-              <input
-                type="tel"
-                id="contact-phone"
-                name="contact[phone]"
-                value="{{ form.phone }}"
-                autocomplete="tel"
-              >
+            <div class="cfaq__field">
+              <label for="cfaq-subject" class="cfaq__label">Topic</label>
+              <div class="cfaq__select-wrap">
+                <select id="cfaq-subject" name="contact[subject]" class="cfaq__select">
+                  <option value="">Select a topic...</option>
+                  <option value="Order Inquiry">Order Inquiry</option>
+                  <option value="Shipping Question">Shipping Question</option>
+                  <option value="Return / Refund">Return / Refund</option>
+                  <option value="Product Question">Product Question</option>
+                  <option value="Other">Other</option>
+                </select>
+                <svg class="cfaq__select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
             </div>
 
-            <div class="form-group">
-              <label for="contact-subject">{{ 'contact.form.subject' | t }}</label>
-              <select id="contact-subject" name="contact[subject]">
-                <option value="">Select a topic...</option>
-                <option value="Order Inquiry">Order Inquiry</option>
-                <option value="Shipping Question">Shipping Question</option>
-                <option value="Return / Refund">Return / Refund</option>
-                <option value="Product Question">Product Question</option>
-                <option value="Other">Other</option>
-              </select>
+            <div class="cfaq__field">
+              <label for="cfaq-msg" class="cfaq__label">Message <span aria-hidden="true">*</span></label>
+              <textarea id="cfaq-msg" name="contact[body]" class="cfaq__textarea" required rows="5" placeholder="Tell us how we can help...">{{ form.body }}</textarea>
             </div>
 
-            <div class="form-group">
-              <label for="contact-message">{{ 'contact.form.message' | t }} <span style="color:#c0392b;">*</span></label>
-              <textarea
-                id="contact-message"
-                name="contact[body]"
-                required
-                rows="5"
-              >{{ form.body }}</textarea>
-            </div>
-
-            <button type="submit" class="btn btn--primary btn--full">
-              {{ 'contact.form.submit' | t }}
-            </button>
+            <button type="submit" class="cfaq__submit-btn">SEND MESSAGE</button>
           </div>
         {% endform %}
+
+        <!-- Contact Info -->
+        <div class="cfaq__contact-info">
+          <h3 class="cfaq__info-title">OTHER WAYS TO REACH US</h3>
+          {% if section.settings.email != blank %}
+            <div class="cfaq__info-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <a href="mailto:{{ section.settings.email }}">{{ section.settings.email }}</a>
+            </div>
+          {% else %}
+            <div class="cfaq__info-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <a href="mailto:support@zeesboxinggear.com">support@zeesboxinggear.com</a>
+            </div>
+          {% endif %}
+          <p class="cfaq__info-note">
+            {{ section.settings.response_time | default: 'We typically respond within 24–48 hours, Monday–Friday.' }}
+          </p>
+        </div>
       </div>
 
       <!-- FAQ -->
-      <div>
-        <h2 style="color:var(--color-primary); font-size:1.5rem; margin-bottom:1.5rem;">Frequently Asked Questions</h2>
+      <div class="cfaq__faq-col">
+        <h2 class="cfaq__col-title">FREQUENTLY ASKED QUESTIONS</h2>
 
-        <div class="faq-list" id="faq-list">
+        <div class="cfaq__faq-list" id="cfaq-faq-list">
           {% for block in section.blocks %}
             {% if block.type == 'faq' %}
-              <div class="faq-item" {{ block.shopify_attributes }}>
+              <div class="cfaq__faq-item" {{ block.shopify_attributes }}>
                 <button
-                  class="faq-question"
+                  class="cfaq__faq-q"
                   aria-expanded="false"
-                  aria-controls="faq-answer-{{ forloop.index }}"
+                  aria-controls="cfaq-a-{{ forloop.index }}"
+                  id="cfaq-q-{{ forloop.index }}"
                 >
-                  {{ block.settings.question }}
-                  <span class="faq-question__icon" aria-hidden="true">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                  </span>
+                  <span>{{ block.settings.question }}</span>
+                  <svg class="cfaq__faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
                 </button>
                 <div
-                  class="faq-answer"
-                  id="faq-answer-{{ forloop.index }}"
+                  class="cfaq__faq-a"
+                  id="cfaq-a-{{ forloop.index }}"
                   role="region"
+                  aria-labelledby="cfaq-q-{{ forloop.index }}"
+                  hidden
                 >
-                  <div class="faq-answer__inner">{{ block.settings.answer }}</div>
+                  <div class="cfaq__faq-a-inner">{{ block.settings.answer }}</div>
                 </div>
               </div>
             {% endif %}
           {% endfor %}
-        </div>
-
-        <!-- Contact Info -->
-        <div style="margin-top:2.5rem; padding:1.5rem; background:#f4f7fa; border-radius:8px;">
-          <h3 style="font-size:1.1rem; color:var(--color-primary); margin-bottom:1rem;">Other Ways to Reach Us</h3>
-          {% if section.settings.email != blank %}
-            <p style="font-size:0.9rem; margin-bottom:0.5rem;">
-              <strong>Email:</strong>
-              <a href="mailto:{{ section.settings.email }}" style="color:var(--color-secondary);">{{ section.settings.email }}</a>
-            </p>
-          {% endif %}
-          {% if section.settings.response_time != blank %}
-            <p style="font-size:0.85rem; color:#888;">{{ section.settings.response_time }}</p>
-          {% endif %}
         </div>
       </div>
 
@@ -158,52 +129,49 @@
   </div>
 </section>
 
+<script>
+(function () {
+  var items = document.querySelectorAll('.cfaq__faq-item');
+  items.forEach(function (item) {
+    var btn = item.querySelector('.cfaq__faq-q');
+    var ans = item.querySelector('.cfaq__faq-a');
+    var icon = item.querySelector('.cfaq__faq-icon');
+    if (!btn || !ans) return;
+    btn.addEventListener('click', function () {
+      var isOpen = btn.getAttribute('aria-expanded') === 'true';
+      items.forEach(function (it) {
+        it.querySelector('.cfaq__faq-q').setAttribute('aria-expanded', 'false');
+        it.querySelector('.cfaq__faq-a').hidden = true;
+        it.querySelector('.cfaq__faq-icon').style.transform = '';
+        it.classList.remove('is-open');
+      });
+      if (!isOpen) {
+        btn.setAttribute('aria-expanded', 'true');
+        ans.hidden = false;
+        icon.style.transform = 'rotate(45deg)';
+        item.classList.add('is-open');
+      }
+    });
+  });
+})();
+</script>
+
 {% schema %}
 {
   "name": "Contact & FAQ",
   "settings": [
-    {
-      "type": "text",
-      "id": "heading",
-      "label": "Page Heading",
-      "default": "Contact & FAQ"
-    },
-    {
-      "type": "text",
-      "id": "subheading",
-      "label": "Page Subheading",
-      "default": "We're here to help. Reach out or find your answer below."
-    },
-    {
-      "type": "text",
-      "id": "email",
-      "label": "Support Email",
-      "default": "support@zeesboxinggear.com"
-    },
-    {
-      "type": "text",
-      "id": "response_time",
-      "label": "Response Time Note",
-      "default": "We typically respond within 24-48 hours, Monday–Friday."
-    }
+    { "type": "text", "id": "heading", "label": "Page Heading", "default": "CONTACT & FAQ" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "We're here to help. Reach out or find your answer below." },
+    { "type": "text", "id": "email", "label": "Support Email", "default": "support@zeesboxinggear.com" },
+    { "type": "text", "id": "response_time", "label": "Response Time Note", "default": "We typically respond within 24–48 hours, Monday–Friday." }
   ],
   "blocks": [
     {
       "type": "faq",
       "name": "FAQ Item",
       "settings": [
-        {
-          "type": "text",
-          "id": "question",
-          "label": "Question",
-          "default": "What is your return policy?"
-        },
-        {
-          "type": "richtext",
-          "id": "answer",
-          "label": "Answer",
-          "default": "<p>We accept returns within 30 days of purchase. Items must be unused and in original packaging. Please contact us to initiate a return.</p>"
-        }
+        { "type": "text", "id": "question", "label": "Question", "default": "What is your return policy?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>We accept returns within 30 days of purchase. Items must be unused and in original packaging.</p>" }
       ]
     }
   ],
@@ -211,41 +179,11 @@
     {
       "name": "Contact & FAQ",
       "blocks": [
-        {
-          "type": "faq",
-          "settings": {
-            "question": "How long does shipping take?",
-            "answer": "<p>We ship worldwide. Domestic orders typically arrive within 3–7 business days. International orders take 7–21 business days depending on location.</p>"
-          }
-        },
-        {
-          "type": "faq",
-          "settings": {
-            "question": "What is your return policy?",
-            "answer": "<p>We accept returns within 30 days of purchase on unused items in original packaging. Contact us at support@zeesboxinggear.com to initiate a return.</p>"
-          }
-        },
-        {
-          "type": "faq",
-          "settings": {
-            "question": "How do I choose the right glove size?",
-            "answer": "<p>Glove sizing is based on your body weight. Under 60kg: 10oz, 60–80kg: 12oz, 80kg+: 14–16oz. Each product page includes a full sizing guide.</p>"
-          }
-        },
-        {
-          "type": "faq",
-          "settings": {
-            "question": "Do you offer discount codes?",
-            "answer": "<p>Yes! Subscribe to our newsletter to receive exclusive discount codes. We also run seasonal sales — follow us on social media to stay updated.</p>"
-          }
-        },
-        {
-          "type": "faq",
-          "settings": {
-            "question": "Can I track my order?",
-            "answer": "<p>Absolutely. Once your order ships, you'll receive an email with a tracking number. You can also log in to your account to view order status.</p>"
-          }
-        }
+        { "type": "faq", "settings": { "question": "How long does shipping take?", "answer": "<p>Domestic orders typically arrive within 3–7 business days. International orders take 7–21 business days depending on location.</p>" } },
+        { "type": "faq", "settings": { "question": "What is your return policy?", "answer": "<p>We accept returns within 30 days on unused items in original packaging. Contact support@zeesboxinggear.com to initiate a return.</p>" } },
+        { "type": "faq", "settings": { "question": "How do I choose the right glove size?", "answer": "<p>Glove sizing is based on body weight. Under 60kg: 10oz, 60–80kg: 12oz, 80kg+: 14–16oz. Each product page includes a full sizing guide.</p>" } },
+        { "type": "faq", "settings": { "question": "Do you offer discount codes?", "answer": "<p>Yes! Subscribe to our newsletter to receive exclusive discount codes. We also run seasonal sales — follow us on social media.</p>" } },
+        { "type": "faq", "settings": { "question": "Can I track my order?", "answer": "<p>Absolutely. Once your order ships, you'll receive an email with a tracking number. You can also log in to your account to view order status.</p>" } }
       ]
     }
   ]

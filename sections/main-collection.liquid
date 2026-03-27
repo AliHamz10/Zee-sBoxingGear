@@ -1,78 +1,137 @@
+{% liquid
+  assign demo_imgs = 'https://images.unsplash.com/photo-1589924691995-400dc9eee119?w=720&q=80,https://images.unsplash.com/photo-1517438984742-1262db08379e?w=720&q=80,https://images.unsplash.com/photo-1594381898411-846e7d193883?w=720&q=80,https://images.unsplash.com/photo-1549476464-37392f717541?w=720&q=80,https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=720&q=80,https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=720&q=80,https://images.unsplash.com/photo-1605296867304-46d5465a13f1?w=720&q=80,https://images.unsplash.com/photo-1530822847156-5df684ec5ee1?w=720&q=80' | split: ','
+  assign demo_names = 'Pro Sparring Gloves,Speed Bag Platform,Elite Boxing Shoes,Heavy Bag 100 lb,Compression Shorts,Head Guard Pro,Training Mitts,Skipping Rope Pro' | split: ','
+  assign demo_prices = '2999,1999,6299,11899,3499,8999,5499,2499' | split: ','
+  assign demo_compare = '9999,0,8999,16999,0,11999,6999,0' | split: ','
+%}
+
 <!-- Collection Header -->
-<div class="collection-header">
+<div class="col-hdr">
   <div class="container">
-    <h1>{{ collection.title }}</h1>
+    <nav class="zbg-breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{{ collection.title | default: 'All Products' }}</span>
+    </nav>
+    <h1 class="col-hdr__title">{{ collection.title | default: 'All Products' }}</h1>
     {% if collection.description != blank %}
-      <p>{{ collection.description }}</p>
+      <p class="col-hdr__desc">{{ collection.description }}</p>
     {% endif %}
   </div>
 </div>
 
-<div class="container">
-  <!-- Breadcrumb -->
-  <nav class="breadcrumb" aria-label="Breadcrumb">
-    <a href="{{ routes.root_url }}">Home</a>
-    <span aria-hidden="true">/</span>
-    <span aria-current="page">{{ collection.title }}</span>
-  </nav>
+<div class="col-body">
+  <div class="container">
 
-  <!-- Toolbar -->
-  <div class="collection-toolbar">
-    <p class="collection-toolbar__count">
-      {{ collection.products_count }} product{% if collection.products_count != 1 %}s{% endif %}
-    </p>
-    <div class="collection-sort">
-      <select id="sort-by" name="sort_by" aria-label="Sort products">
-        <option value="manual"{% if collection.sort_by == 'manual' %} selected{% endif %}>Featured</option>
-        <option value="best-selling"{% if collection.sort_by == 'best-selling' %} selected{% endif %}>Best Selling</option>
-        <option value="title-ascending"{% if collection.sort_by == 'title-ascending' %} selected{% endif %}>A–Z</option>
-        <option value="title-descending"{% if collection.sort_by == 'title-descending' %} selected{% endif %}>Z–A</option>
-        <option value="price-ascending"{% if collection.sort_by == 'price-ascending' %} selected{% endif %}>Price: Low to High</option>
-        <option value="price-descending"{% if collection.sort_by == 'price-descending' %} selected{% endif %}>Price: High to Low</option>
-        <option value="created-descending"{% if collection.sort_by == 'created-descending' %} selected{% endif %}>Newest</option>
-      </select>
+    <!-- Toolbar -->
+    <div class="col-toolbar">
+      <p class="col-toolbar__count">
+        {% if collection.products_count > 0 %}
+          {{ collection.products_count }} product{% if collection.products_count != 1 %}s{% endif %}
+        {% else %}
+          8 products
+        {% endif %}
+      </p>
+      <div class="col-toolbar__right">
+        <label class="col-toolbar__label" for="col-sort">Sort by</label>
+        <div class="col-sort-wrap">
+          <select
+            id="col-sort"
+            class="col-sort"
+            name="sort_by"
+            onchange="window.location = '{{ collection.url }}?sort_by=' + this.value"
+            aria-label="Sort products"
+          >
+            <option value="manual"{% if collection.sort_by == 'manual' %} selected{% endif %}>Featured</option>
+            <option value="best-selling"{% if collection.sort_by == 'best-selling' %} selected{% endif %}>Best Selling</option>
+            <option value="title-ascending"{% if collection.sort_by == 'title-ascending' %} selected{% endif %}>A–Z</option>
+            <option value="title-descending"{% if collection.sort_by == 'title-descending' %} selected{% endif %}>Z–A</option>
+            <option value="price-ascending"{% if collection.sort_by == 'price-ascending' %} selected{% endif %}>Price: Low–High</option>
+            <option value="price-descending"{% if collection.sort_by == 'price-descending' %} selected{% endif %}>Price: High–Low</option>
+            <option value="created-descending"{% if collection.sort_by == 'created-descending' %} selected{% endif %}>Newest</option>
+          </select>
+          <svg class="col-sort-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- Product Grid -->
-  {% paginate collection.products by section.settings.products_per_page %}
-    {% if collection.products.size > 0 %}
-      <div class="product-grid">
-        {% for product in collection.products %}
-          {% render 'product-card', product: product %}
-        {% endfor %}
-      </div>
-
-      <!-- Pagination -->
-      {% if paginate.pages > 1 %}
-        <nav class="pagination" aria-label="Pagination" style="display:flex; justify-content:center; gap:0.5rem; padding:2.5rem 0;">
-          {% if paginate.previous %}
-            <a href="{{ paginate.previous.url }}" class="btn btn--secondary btn--sm">&larr; Prev</a>
-          {% endif %}
-          {% for part in paginate.parts %}
-            {% if part.is_link %}
-              <a href="{{ part.url }}" class="btn btn--secondary btn--sm">{{ part.title }}</a>
-            {% else %}
-              {% if part.title == paginate.current_page %}
-                <span class="btn btn--primary btn--sm" aria-current="page">{{ part.title }}</span>
-              {% else %}
-                <span class="btn btn--sm" style="opacity:0.4; cursor:default;">{{ part.title }}</span>
-              {% endif %}
-            {% endif %}
+    <!-- Product Grid -->
+    {% paginate collection.products by section.settings.products_per_page %}
+      {% if collection.products.size > 0 %}
+        <div class="col-grid">
+          {% for product in collection.products %}
+            {% render 'product-card', product: product, show_quick_add: true %}
           {% endfor %}
-          {% if paginate.next %}
-            <a href="{{ paginate.next.url }}" class="btn btn--secondary btn--sm">Next &rarr;</a>
-          {% endif %}
-        </nav>
-      {% endif %}
+        </div>
 
-    {% else %}
-      <div style="text-align:center; padding:5rem 1rem; color:#888;">
-        <p style="font-size:1.1rem;">{{ 'products.general.no_products' | t }}</p>
-        <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary mt-3">Browse All Products</a>
-      </div>
-    {% endif %}
-  {% endpaginate %}
+        {% if paginate.pages > 1 %}
+          <nav class="col-pagination" aria-label="Pagination">
+            {% if paginate.previous %}
+              <a href="{{ paginate.previous.url }}" class="col-pag-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+              </a>
+            {% endif %}
+            {% for part in paginate.parts %}
+              {% if part.is_link %}
+                <a href="{{ part.url }}" class="col-pag-btn">{{ part.title }}</a>
+              {% elsif part.title == paginate.current_page %}
+                <span class="col-pag-btn col-pag-btn--active" aria-current="page">{{ part.title }}</span>
+              {% else %}
+                <span class="col-pag-btn col-pag-btn--gap">{{ part.title }}</span>
+              {% endif %}
+            {% endfor %}
+            {% if paginate.next %}
+              <a href="{{ paginate.next.url }}" class="col-pag-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            {% endif %}
+          </nav>
+        {% endif %}
+
+      {% else %}
+        {% comment %} Demo placeholder grid {% endcomment %}
+        <div class="col-grid">
+          {% for demo_name in demo_names %}
+            {% liquid
+              assign di = forloop.index0
+              assign dp = demo_prices[di] | plus: 0
+              assign dc = demo_compare[di] | plus: 0
+            %}
+            <article class="pc">
+              <div class="pc__media">
+                {% if dc > 0 %}<span class="pc__badge">SALE</span>{% endif %}
+                <img
+                  class="pc__img"
+                  src="{{ demo_imgs[di] }}"
+                  alt="{{ demo_name }}"
+                  width="720"
+                  height="720"
+                  loading="{% if di < 4 %}eager{% else %}lazy{% endif %}"
+                >
+              </div>
+              <div class="pc__body">
+                <h3 class="pc__title"><span>{{ demo_name }}</span></h3>
+                <div class="pc__price">
+                  {% if dc > 0 %}
+                    <span class="pc__price-sale">{{ dp | money }}</span>
+                    <s class="pc__price-compare">{{ dc | money }}</s>
+                  {% else %}
+                    <span class="pc__price-reg">{{ dp | money }}</span>
+                  {% endif %}
+                </div>
+                <div class="pc__atc">
+                  <button class="pc__atc-btn" type="button">ADD TO CART</button>
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endpaginate %}
+
+  </div>
 </div>
 
 {% schema %}

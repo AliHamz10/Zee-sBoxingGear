@@ -1,7 +1,29 @@
 {% liquid
   assign brand_name = section.settings.brand_name | default: "Zee's Boxing Gear"
   assign utility_links = section.settings.utility_menu.links
+  assign announcement = section.settings.announcement | default: "FREE WORLDWIDE SHIPPING ON ORDERS ABOVE $100"
 %}
+
+<!-- ── Announcement Bar ── -->
+{% if announcement != blank %}
+  <div class="topbar" role="banner" aria-label="Announcement">
+    <div class="container">
+      <div class="topbar__inner">
+        <div class="topbar__left">
+          <a href="{{ routes.account_url }}" class="topbar__link">My Account</a>
+          <span class="topbar__divider" aria-hidden="true">|</span>
+          <a href="/pages/contact" class="topbar__link">Help</a>
+        </div>
+        <div class="topbar__center">{{ announcement }}</div>
+        <div class="topbar__right">
+          <span class="topbar__link">Free Returns</span>
+          <span class="topbar__divider" aria-hidden="true">|</span>
+          <span class="topbar__link">Secure Checkout</span>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
 
 <!-- ── Main Header ── -->
 <header class="site-header" role="banner">

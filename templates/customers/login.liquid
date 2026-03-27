@@ -1,55 +1,66 @@
 {% layout 'theme' %}
 
-<div class="auth-page">
+<div class="auth-pg">
   <div class="auth-card">
-    <h1 class="auth-card__title">{{ 'customer.login.title' | t }}</h1>
-    <p class="auth-card__subtitle">Welcome back, fighter.</p>
+
+    <div class="auth-card__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+    </div>
+
+    <h1 class="auth-card__title">SIGN IN</h1>
+    <p class="auth-card__sub">Welcome back, fighter.</p>
 
     {% form 'customer_login', id: 'login-form' %}
       {% if form.errors %}
-        <div class="flash-message flash-message--error">
+        <div class="auth-alert auth-alert--error">
           {{ form.errors | default_errors }}
         </div>
       {% endif %}
 
-      <div class="auth-form">
-        <div class="form-group">
-          <label for="login-email">{{ 'customer.login.email' | t }}</label>
+      <div class="auth-fields">
+        <div class="auth-field">
+          <label for="login-email" class="auth-field__label">Email Address</label>
           <input
             type="email"
             id="login-email"
             name="customer[email]"
+            class="auth-field__input"
             autocomplete="email"
             required
+            placeholder="your@email.com"
           >
         </div>
 
-        <div class="form-group">
-          <label for="login-password">{{ 'customer.login.password' | t }}</label>
+        <div class="auth-field">
+          <label for="login-password" class="auth-field__label">Password</label>
           <input
             type="password"
             id="login-password"
             name="customer[password]"
+            class="auth-field__input"
             autocomplete="current-password"
             required
+            placeholder="••••••••"
           >
         </div>
-
-        <button type="submit" class="btn btn--primary btn--full btn--lg" style="margin-top:0.5rem;">
-          {{ 'customer.login.submit' | t }}
-        </button>
       </div>
+
+      <div class="auth-card__forgot">
+        <a href="{{ routes.account_recover_url }}">Forgot your password?</a>
+      </div>
+
+      <button type="submit" class="auth-submit-btn">SIGN IN</button>
     {% endform %}
 
-    <div class="auth-links">
-      <a href="{{ routes.account_recover_url }}">{{ 'customer.login.forgot_password' | t }}</a>
-    </div>
+    <div class="auth-card__divider"><span>OR</span></div>
 
-    <hr class="auth-divider">
+    <p class="auth-card__switch">
+      New to Zee's Boxing Gear?
+      <a href="{{ routes.account_register_url }}">Create an account</a>
+    </p>
 
-    <div class="auth-links">
-      {{ 'customer.login.no_account' | t }}
-      <a href="{{ routes.account_register_url }}">{{ 'customer.login.create' | t }}</a>
-    </div>
   </div>
 </div>

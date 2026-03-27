@@ -1,58 +1,56 @@
 {% layout 'theme' %}
 
-<div class="account-page__header">
+<div class="acct-hdr">
   <div class="container">
-    <h1>{{ 'customer.account.title' | t }}</h1>
-    <p>Welcome back, {{ customer.first_name }}!</p>
+    <h1 class="acct-hdr__title">MY ACCOUNT</h1>
+    <p class="acct-hdr__welcome">Welcome back, <strong>{{ customer.first_name }}</strong>!</p>
   </div>
 </div>
 
-<div class="account-page">
+<div class="acct-pg">
   <div class="container">
-    <div class="account-page__inner">
+    <div class="acct-pg__inner">
 
-      <!-- Sidebar Nav -->
-      <nav class="account-nav" aria-label="Account navigation">
-        <a href="{{ routes.account_url }}" class="active">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
+      <!-- Sidebar -->
+      <nav class="acct-nav" aria-label="Account navigation">
+        <a href="{{ routes.account_url }}" class="acct-nav__link is-active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
           </svg>
-          My Account
+          Overview
         </a>
-        <a href="{{ routes.account_url }}/orders">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
+        <a href="{{ routes.account_url }}/orders" class="acct-nav__link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
           </svg>
-          {{ 'customer.account.orders' | t }}
+          Orders
         </a>
-        <a href="{{ routes.account_addresses_url }}">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
+        <a href="{{ routes.account_addresses_url }}" class="acct-nav__link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
           </svg>
           Addresses
         </a>
-        <a href="{{ routes.account_logout_url }}">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-            <polyline points="16 17 21 12 16 7"></polyline>
-            <line x1="21" y1="12" x2="9" y2="12"></line>
+        <a href="{{ routes.account_logout_url }}" class="acct-nav__link acct-nav__link--logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
           </svg>
-          {{ 'customer.account.logout' | t }}
+          Sign Out
         </a>
       </nav>
 
-      <!-- Main Content -->
-      <div>
-        <h2 style="font-family:'Oswald',sans-serif; font-size:1.35rem; color:var(--color-primary); margin-bottom:1.5rem;">
-          {{ 'customer.account.orders' | t }}
-        </h2>
+      <!-- Main -->
+      <div class="acct-main">
+        <h2 class="acct-main__heading">ORDER HISTORY</h2>
 
         {% if customer.orders.size > 0 %}
-          <div style="overflow-x:auto;">
-            <table class="orders-table">
+          <div class="acct-orders">
+            <table class="acct-table">
               <thead>
                 <tr>
                   <th>Order</th>
@@ -66,25 +64,30 @@
               <tbody>
                 {% for order in customer.orders %}
                   <tr>
-                    <td><strong>{{ order.name }}</strong></td>
+                    <td class="acct-table__order">{{ order.name }}</td>
                     <td>{{ order.created_at | date: "%b %d, %Y" }}</td>
                     <td>
-                      <span class="order-status order-status--{{ order.fulfillment_status | replace: ' ', '-' | downcase }}">
+                      <span class="acct-status acct-status--{{ order.fulfillment_status | replace: ' ', '-' | downcase }}">
                         {{ order.fulfillment_status | capitalize | replace: '_', ' ' }}
                       </span>
                     </td>
-                    <td>{{ order.line_items.size }} item{% if order.line_items.size != 1 %}s{% endif %}</td>
+                    <td>{{ order.line_items.size }}</td>
                     <td>{{ order.total_price | money }}</td>
-                    <td><a href="{{ order.customer_url }}" style="color:var(--color-secondary); font-size:0.85rem; font-weight:600;">View</a></td>
+                    <td><a href="{{ order.customer_url }}" class="acct-table__view">View</a></td>
                   </tr>
                 {% endfor %}
               </tbody>
             </table>
           </div>
         {% else %}
-          <div style="padding:3rem; text-align:center; background:#f4f7fa; border-radius:8px; color:#888;">
-            <p style="margin-bottom:1.25rem;">{{ 'customer.orders.none' | t }}</p>
-            <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">Start Shopping</a>
+          <div class="acct-empty">
+            <svg class="acct-empty__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+            <p>You haven't placed any orders yet.</p>
+            <a href="{{ routes.all_products_collection_url }}" class="auth-submit-btn" style="display:inline-flex; width:auto; padding: 0.85rem 2rem; margin-top: 1.5rem;">SHOP NOW</a>
           </div>
         {% endif %}
       </div>

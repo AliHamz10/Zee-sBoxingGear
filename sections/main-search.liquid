@@ -1,0 +1,76 @@
+{% liquid
+  assign search_performed = false
+  if search.performed
+    assign search_performed = true
+  endif
+%}
+
+<div class="srch-pg">
+  <div class="container">
+
+    <nav class="zbg-breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span>/</span>
+      <span aria-current="page">Search</span>
+    </nav>
+
+    <h1 class="srch-pg__title">
+      {% if search_performed and search.terms != blank %}
+        Results for "{{ search.terms }}"
+      {% else %}
+        SEARCH
+      {% endif %}
+    </h1>
+
+    <!-- Search Form -->
+    <form action="{{ routes.search_url }}" method="get" class="srch-form" role="search">
+      <div class="srch-form__inner">
+        <svg class="srch-form__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          type="search"
+          name="q"
+          class="srch-form__input"
+          value="{{ search.terms | escape }}"
+          placeholder="Search for gloves, bags, apparel..."
+          autocomplete="off"
+          aria-label="Search"
+        >
+        <button type="submit" class="srch-form__btn">SEARCH</button>
+      </div>
+    </form>
+
+    <!-- Results -->
+    {% if search_performed %}
+      {% if search.results_count > 0 %}
+        <p class="srch-pg__count">{{ search.results_count }} result{% if search.results_count != 1 %}s{% endif %} found</p>
+        <div class="col-grid">
+          {% for item in search.results %}
+            {% if item.object_type == 'product' %}
+              {% render 'product-card', product: item, show_quick_add: true %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="srch-empty">
+          <svg class="srch-empty__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <p class="srch-empty__msg">No results for "{{ search.terms | escape }}"</p>
+          <p class="srch-empty__hint">Try a different search term or browse our collections below.</p>
+          <a href="{{ routes.all_products_collection_url }}" class="cart-pg__checkout-btn" style="display:inline-flex; width:auto; padding: 0.85rem 2rem; margin-top:1.5rem;">BROWSE ALL PRODUCTS</a>
+        </div>
+      {% endif %}
+    {% endif %}
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Search"
+}
+{% endschema %}

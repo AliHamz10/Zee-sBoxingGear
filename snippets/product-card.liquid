@@ -5,13 +5,31 @@
   endif
 
   assign primary_variant = product.selected_or_first_available_variant
+  assign is_sale = false
+  if product.compare_at_price_max > product.price
+    assign is_sale = true
+  endif
+
+  assign color_count = 0
+  for ov in product.options_with_values
+    assign o_name = ov.name | downcase
+    if o_name == 'color' or o_name == 'colour'
+      assign color_count = ov.values.size
+      break
+    endif
+  endfor
 %}
 
-<article class="product-card">
-  <a href="{{ product.url }}" class="product-card__media" tabindex="-1" aria-hidden="true">
+<article class="pc">
+  <a href="{{ product.url }}" class="pc__media">
+    {% if is_sale %}
+      <span class="pc__badge">SALE</span>
+    {% elsif product.available == false %}
+      <span class="pc__badge pc__badge--sold">SOLD OUT</span>
+    {% endif %}
     {% if product.featured_image %}
       <img
-        class="product-card__img"
+        class="pc__img"
         src="{{ product.featured_image | image_url: width: 720 }}"
         alt="{{ product.featured_image.alt | escape | default: product.title }}"
         width="720"
@@ -19,53 +37,45 @@
         loading="lazy"
       >
     {% else %}
-      <div class="product-card__placeholder" aria-hidden="true">
-        {{ 'product-1' | placeholder_svg_tag: 'product-card__placeholder-svg' }}
+      <div class="pc__ph">
+        {{ 'product-1' | placeholder_svg_tag: 'pc__ph-svg' }}
       </div>
     {% endif %}
-
-    <div class="product-card__badges">
-      {% render 'badge', product: product %}
-    </div>
   </a>
 
-  <div class="product-card__body">
+  <div class="pc__body">
     {% if product.vendor != blank %}
-      <p class="product-card__vendor">{{ product.vendor }}</p>
+      <p class="pc__vendor">{{ product.vendor }}</p>
     {% endif %}
 
-    <h3 class="product-card__title">
+    <h3 class="pc__title">
       <a href="{{ product.url }}">{{ product.title }}</a>
     </h3>
 
-    <div class="product-card__price">
-      {% if product.compare_at_price_max > product.price %}
-        <span class="product-card__price-current product-card__price-current--sale">
-          {{ product.price | money }}
-        </span>
-        <span class="product-card__price-compare">
-          {{ product.compare_at_price_max | money }}
-        </span>
+    {% if color_count > 0 %}
+      <p class="pc__colors">{{ color_count }} Color{% if color_count != 1 %}s{% endif %}</p>
+    {% endif %}
+
+    <div class="pc__price">
+      {% if is_sale %}
+        <span class="pc__price-sale">{{ product.price | money }}</span>
+        <s class="pc__price-compare">{{ product.compare_at_price_max | money }}</s>
       {% else %}
-        <span class="product-card__price-current">
-          {{ product.price | money }}
-        </span>
+        <span class="pc__price-reg">{{ product.price | money }}</span>
       {% endif %}
     </div>
 
     {% if quick_add %}
-      <div class="product-card__atc">
+      <div class="pc__atc">
         {% if product.available and primary_variant %}
           <form method="post" action="{{ routes.cart_add_url }}">
             <input type="hidden" name="id" value="{{ primary_variant.id }}">
-            <button type="submit" class="btn btn--primary btn--full btn--sm" aria-label="Add {{ product.title | escape }} to cart">
-              Add to Cart
+            <button type="submit" class="pc__atc-btn" aria-label="Add {{ product.title | escape }} to cart">
+              ADD TO CART
             </button>
           </form>
         {% else %}
-          <button class="btn btn--secondary btn--full btn--sm" disabled>
-            Sold Out
-          </button>
+          <button class="pc__atc-btn pc__atc-btn--sold" disabled>SOLD OUT</button>
         {% endif %}
       </div>
     {% endif %}

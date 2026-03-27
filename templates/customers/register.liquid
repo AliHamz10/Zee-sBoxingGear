@@ -1,73 +1,90 @@
 {% layout 'theme' %}
 
-<div class="auth-page">
+<div class="auth-pg">
   <div class="auth-card">
-    <h1 class="auth-card__title">{{ 'customer.register.title' | t }}</h1>
-    <p class="auth-card__subtitle">Join the Zee's Boxing Gear community.</p>
+
+    <div class="auth-card__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <line x1="19" y1="8" x2="19" y2="14"/>
+        <line x1="22" y1="11" x2="16" y2="11"/>
+      </svg>
+    </div>
+
+    <h1 class="auth-card__title">CREATE ACCOUNT</h1>
+    <p class="auth-card__sub">Join the Zee's Boxing Gear community.</p>
 
     {% form 'create_customer', id: 'register-form' %}
       {% if form.errors %}
-        <div class="flash-message flash-message--error">
+        <div class="auth-alert auth-alert--error">
           {{ form.errors | default_errors }}
         </div>
       {% endif %}
 
-      <div class="auth-form">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
-          <div class="form-group">
-            <label for="reg-first-name">{{ 'customer.register.first_name' | t }}</label>
+      <div class="auth-fields">
+        <div class="auth-fields__row">
+          <div class="auth-field">
+            <label for="reg-first" class="auth-field__label">First Name</label>
             <input
               type="text"
-              id="reg-first-name"
+              id="reg-first"
               name="customer[first_name]"
+              class="auth-field__input"
               autocomplete="given-name"
+              placeholder="John"
             >
           </div>
-          <div class="form-group">
-            <label for="reg-last-name">{{ 'customer.register.last_name' | t }}</label>
+          <div class="auth-field">
+            <label for="reg-last" class="auth-field__label">Last Name</label>
             <input
               type="text"
-              id="reg-last-name"
+              id="reg-last"
               name="customer[last_name]"
+              class="auth-field__input"
               autocomplete="family-name"
+              placeholder="Doe"
             >
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="reg-email">{{ 'customer.register.email' | t }}</label>
+        <div class="auth-field">
+          <label for="reg-email" class="auth-field__label">Email Address</label>
           <input
             type="email"
             id="reg-email"
             name="customer[email]"
+            class="auth-field__input"
             autocomplete="email"
             required
+            placeholder="your@email.com"
           >
         </div>
 
-        <div class="form-group">
-          <label for="reg-password">{{ 'customer.register.password' | t }}</label>
+        <div class="auth-field">
+          <label for="reg-password" class="auth-field__label">Password</label>
           <input
             type="password"
             id="reg-password"
             name="customer[password]"
+            class="auth-field__input"
             autocomplete="new-password"
             required
             minlength="5"
+            placeholder="Min. 5 characters"
           >
         </div>
-
-        <button type="submit" class="btn btn--primary btn--full btn--lg" style="margin-top:0.5rem;">
-          {{ 'customer.register.submit' | t }}
-        </button>
       </div>
+
+      <button type="submit" class="auth-submit-btn">CREATE ACCOUNT</button>
     {% endform %}
 
-    <hr class="auth-divider">
+    <div class="auth-card__divider"><span>OR</span></div>
 
-    <div class="auth-links">
-      {{ 'customer.register.have_account' | t }}
-      <a href="{{ routes.account_login_url }}">{{ 'customer.register.login' | t }}</a>
-    </div>
+    <p class="auth-card__switch">
+      Already have an account?
+      <a href="{{ routes.account_login_url }}">Sign in</a>
+    </p>
+
   </div>
 </div>
