@@ -1,10 +1,10 @@
 {
   "current": {
-    "color_primary": "#355872",
-    "color_secondary": "#7AAACE",
-    "color_accent": "#9CD5FF",
-    "color_text": "#1a1a1a",
-    "color_background": "#ffffff",
+    "color_primary": "#000000",
+    "color_secondary": "#f2c000",
+    "color_accent": "#f2c000",
+    "color_text": "#ffffff",
+    "color_background": "#000000",
     "logo_width": 160,
     "cart_type": "drawer"
   }

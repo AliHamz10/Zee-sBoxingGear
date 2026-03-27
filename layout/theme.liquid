@@ -4,10 +4,7 @@
   {% liquid
     assign brand_name = settings.brand_name | default: "Zee's Boxing Gear"
     assign favicon_letter = settings.favicon_letter | default: "Z"
-    assign favicon_bg = settings.color_primary | default: "#355872"
-    assign favicon_data_uri = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230f1720'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial,Helvetica,sans-serif' font-size='34' font-weight='700' fill='white'%3E" | append: favicon_letter | append: "%3C/text%3E%3C/svg%3E"
     assign resolved_page_title = page_title | strip
-
     if request.page_type == 'index' or resolved_page_title == blank or resolved_page_title == shop.name or resolved_page_title contains '.myshopify.com'
       assign resolved_page_title = brand_name
     endif
@@ -15,74 +12,64 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
   <title>
     {{ resolved_page_title }}{% if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif %}
     {% if current_page != 1 %} &ndash; Page {{ current_page }}{% endif %}
     {% unless resolved_page_title contains brand_name %} &ndash; {{ brand_name }}{% endunless %}
   </title>
-
   {% if page_description %}
     <meta name="description" content="{{ page_description | escape }}">
   {% endif %}
-
   <link rel="canonical" href="{{ canonical_url }}">
-  <meta name="application-name" content="{{ brand_name }}">
   <meta property="og:site_name" content="{{ brand_name }}">
-
   {% if settings.favicon %}
     <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32 }}">
     <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180 }}">
   {% else %}
-    <link rel="icon" type="image/svg+xml" href="{{ favicon_data_uri }}">
-    <link rel="shortcut icon" href="{{ favicon_data_uri }}">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23000'/%3E%3Ctext x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial,sans-serif' font-size='36' font-weight='800' fill='%23f2c000'%3EZ%3C/text%3E%3C/svg%3E">
   {% endif %}
-
-  <!-- Preconnect for fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-  <!-- CSS Variables from theme settings -->
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --color-primary: {{ settings.color_primary }};
-      --color-secondary: {{ settings.color_secondary }};
-      --color-accent: {{ settings.color_accent }};
-      --color-text: {{ settings.color_text }};
-      --color-background: {{ settings.color_background }};
-      --color-primary-rgb: {{ settings.color_primary | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+      --color-primary: #fff;
+      --color-secondary: #f2c000;
+      --color-accent: #f2c000;
+      --color-text: #fff;
+      --color-background: #000;
+      --zbg-black: #000;
+      --zbg-yellow: #f2c000;
+      --header-h: 62px;
+      --topbar-h: 36px;
     }
   </style>
-
   {{ 'base.css' | asset_url | stylesheet_tag }}
   {{ content_for_header }}
 </head>
-
 <body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}-{{ template.suffix }}{% endif %}">
 
-  <!-- Skip to content -->
   <a class="skip-to-content" href="#MainContent">Skip to content</a>
 
   <!-- Cart Drawer -->
-  <div id="cart-drawer" class="cart-drawer" aria-hidden="true">
+  <div id="cart-drawer" class="cart-drawer" aria-hidden="true" role="dialog" aria-label="Shopping cart" aria-modal="true">
     <div class="cart-drawer__overlay"></div>
     <div class="cart-drawer__panel">
       <div class="cart-drawer__header">
-        <h2 class="cart-drawer__title">{{ 'cart.general.title' | t }}</h2>
+        <h2 class="cart-drawer__title">YOUR CART</h2>
         <button class="cart-drawer__close" aria-label="Close cart">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
         </button>
       </div>
       <div class="cart-drawer__body" id="cart-drawer-body">
-        <!-- Populated via JS -->
+        <div class="cart-drawer__loading" id="cart-drawer-loading">
+          <div class="cart-drawer__spinner"></div>
+        </div>
       </div>
-      <div class="cart-drawer__footer" id="cart-drawer-footer">
-        <!-- Populated via JS -->
-      </div>
+      <div class="cart-drawer__footer" id="cart-drawer-footer"></div>
     </div>
   </div>
 
@@ -93,6 +80,9 @@
   </main>
 
   {% section 'footer' %}
+
+  <!-- Toast -->
+  <div id="zbg-toast" class="zbg-toast" aria-live="polite" role="status" aria-atomic="true"></div>
 
   {{ 'theme.js' | asset_url | script_tag }}
 

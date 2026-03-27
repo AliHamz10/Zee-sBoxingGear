@@ -208,80 +208,9 @@
   </div>
 </section>
 
-<!-- Product JSON for JS -->
+<!-- Product JSON for JS (consumed by theme.js) -->
 <script type="application/json" id="product-json">
   {{ product | json }}
-</script>
-
-<script>
-(function () {
-  // Thumbnail gallery
-  var thumbs = document.querySelectorAll('.pdp__thumb');
-  var mainImg = document.getElementById('pdp-main-img');
-  thumbs.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      if (mainImg) mainImg.src = this.dataset.src;
-      thumbs.forEach(function (t) { t.classList.remove('is-active'); });
-      this.classList.add('is-active');
-    });
-  });
-
-  // Qty controls
-  var qtyInput = document.getElementById('pdp-qty');
-  var minusBtn = document.getElementById('pdp-qty-minus');
-  var plusBtn = document.getElementById('pdp-qty-plus');
-  if (qtyInput && minusBtn && plusBtn) {
-    minusBtn.addEventListener('click', function () {
-      var v = parseInt(qtyInput.value, 10);
-      if (v > 1) qtyInput.value = v - 1;
-    });
-    plusBtn.addEventListener('click', function () {
-      qtyInput.value = parseInt(qtyInput.value, 10) + 1;
-    });
-  }
-
-  // Variant selection
-  var productData;
-  var productJsonEl = document.getElementById('product-json');
-  if (productJsonEl) {
-    try { productData = JSON.parse(productJsonEl.textContent); } catch (e) {}
-  }
-
-  var optionBtnGroups = document.querySelectorAll('.pdp__option-btns');
-  var selectedOptions = [];
-
-  optionBtnGroups.forEach(function (group, gi) {
-    var activeBtns = group.querySelectorAll('.pdp__opt-btn.is-selected');
-    selectedOptions[gi] = activeBtns.length ? activeBtns[0].dataset.value : '';
-    group.querySelectorAll('.pdp__opt-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        group.querySelectorAll('.pdp__opt-btn').forEach(function (b) { b.classList.remove('is-selected'); });
-        btn.classList.add('is-selected');
-        selectedOptions[gi] = btn.dataset.value;
-        var valSpan = document.getElementById('pdp-opt-val-' + gi);
-        if (valSpan) valSpan.textContent = btn.dataset.value;
-        updateVariant();
-      });
-    });
-  });
-
-  function updateVariant() {
-    if (!productData || !productData.variants) return;
-    var match = productData.variants.find(function (v) {
-      return v.options.every(function (o, i) { return o === selectedOptions[i]; });
-    });
-    if (!match) return;
-    var vidInput = document.getElementById('pdp-variant-id');
-    var atcBtn = document.getElementById('pdp-atc');
-    var priceEl = document.getElementById('pdp-price-display');
-    if (vidInput) vidInput.value = match.id;
-    if (atcBtn) {
-      atcBtn.disabled = !match.available;
-      atcBtn.textContent = match.available ? 'ADD TO CART' : 'SOLD OUT';
-    }
-    if (priceEl) priceEl.textContent = (match.price / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-  }
-})();
 </script>
 
 {% schema %}

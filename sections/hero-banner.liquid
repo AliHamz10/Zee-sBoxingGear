@@ -1,31 +1,43 @@
-<section class="hero">
+<section class="hero" id="hero-{{ section.id }}">
   {% if section.settings.bg_image %}
     <img
       class="hero__bg"
-      src="{{ section.settings.bg_image | image_url: width: 2000 }}"
+      src="{{ section.settings.bg_image | image_url: width: 2400 }}"
       alt=""
       role="presentation"
       loading="eager"
       fetchpriority="high"
+      decoding="async"
     >
   {% else %}
-    <div class="hero__bg hero__bg--fallback"></div>
+    <div class="hero__bg hero__bg--fallback" role="presentation"></div>
   {% endif %}
-  <div class="hero__overlay"></div>
+
+  <div class="hero__overlay" aria-hidden="true"></div>
 
   <div class="hero__content">
-    <h1 class="hero__title">{{ section.settings.heading | default: "TRAIN LIKE A CHAMPION" }}</h1>
+    {% if section.settings.eyebrow != blank %}
+      <p class="hero__eyebrow">{{ section.settings.eyebrow }}</p>
+    {% endif %}
+    <h1 class="hero__title">{{ section.settings.heading | default: 'BUILT FOR THE FIGHT' }}</h1>
     {% if section.settings.subheading != blank %}
       <p class="hero__subtitle">{{ section.settings.subheading }}</p>
     {% endif %}
-    {% if section.settings.btn_label != blank %}
-      <a href="{{ section.settings.btn_url | default: routes.all_products_collection_url }}" class="hero__cta">
-        {{ section.settings.btn_label }}
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polyline points="9 18 15 12 9 6"/>
-        </svg>
-      </a>
-    {% endif %}
+    <div class="hero__actions">
+      {% if section.settings.btn_label != blank %}
+        <a href="{{ section.settings.btn_url | default: routes.all_products_collection_url }}" class="hero__cta">
+          {{ section.settings.btn_label }}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </a>
+      {% endif %}
+      {% if section.settings.btn2_label != blank %}
+        <a href="{{ section.settings.btn2_url | default: routes.root_url }}" class="hero__cta-sec">
+          {{ section.settings.btn2_label }}
+        </a>
+      {% endif %}
+    </div>
   </div>
 </section>
 
@@ -35,10 +47,13 @@
   "tag": "section",
   "settings": [
     { "type": "image_picker", "id": "bg_image", "label": "Background Image" },
-    { "type": "text", "id": "heading", "label": "Headline", "default": "TRAIN LIKE A CHAMPION" },
-    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Premium boxing gear for fighters at every level." },
-    { "type": "text", "id": "btn_label", "label": "Button Label", "default": "SHOP NOW" },
-    { "type": "url",  "id": "btn_url",   "label": "Button URL" }
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow Text", "default": "" },
+    { "type": "text", "id": "heading", "label": "Headline", "default": "BUILT FOR THE FIGHT" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Premium boxing gear for fighters at every level." },
+    { "type": "text", "id": "btn_label", "label": "Primary Button Label", "default": "SHOP NOW" },
+    { "type": "url",  "id": "btn_url",   "label": "Primary Button URL" },
+    { "type": "text", "id": "btn2_label", "label": "Secondary Button Label", "default": "" },
+    { "type": "url",  "id": "btn2_url",  "label": "Secondary Button URL" }
   ],
   "presets": [{ "name": "Hero Banner" }]
 }
