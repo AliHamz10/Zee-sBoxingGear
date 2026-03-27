@@ -897,14 +897,13 @@ p:last-child { margin-bottom: 0; }
   height: 3px;
   width: 36px;
   border-radius: 2px;
-  background: rgba(255,255,255,0.15);
+  background-color: rgba(255,255,255,0.3);
   border: none;
-  padding: 6px 0;
-  background-clip: content-box;
+  padding: 0;
   cursor: pointer;
   transition: background-color 0.3s ease, width 0.3s ease;
 }
-.sbc__seg:hover { background-color: rgba(255,255,255,0.35); }
+.sbc__seg:hover { background-color: rgba(255,255,255,0.5); }
 .sbc__seg.is-active {
   background-color: #f2c000;
   width: 56px;
@@ -1147,14 +1146,13 @@ p:last-child { margin-bottom: 0; }
   height: 3px;
   width: 36px;
   border-radius: 2px;
-  background: rgba(255,255,255,0.15);
-  background-clip: content-box;
+  background-color: rgba(255,255,255,0.3);
   border: none;
-  padding: 6px 0;
+  padding: 0;
   cursor: pointer;
   transition: background-color 0.3s ease, width 0.3s ease;
 }
-.jfy__seg:hover { background-color: rgba(255,255,255,0.35); }
+.jfy__seg:hover { background-color: rgba(255,255,255,0.5); }
 .jfy__seg.is-active { background-color: #f2c000; width: 56px; }
 .jfy__counter {
   font-family: 'Oswald', sans-serif;
@@ -3188,13 +3186,12 @@ p:last-child { margin-bottom: 0; }
   width: 36px;
   border-radius: 2px;
   border: none;
-  padding: 6px 0;
-  background: rgba(255,255,255,0.15);
-  background-clip: content-box;
+  padding: 0;
+  background-color: rgba(255,255,255,0.3);
   cursor: pointer;
   transition: background-color 0.3s ease, width 0.3s ease;
 }
-.tn__segment:hover { background-color: rgba(255,255,255,0.35); }
+.tn__segment:hover { background-color: rgba(255,255,255,0.5); }
 .tn__segment.is-active {
   background-color: #f2c000;
   width: 56px;
