@@ -7,10 +7,10 @@
   assign products_limit = section.settings.products_count | default: 8
 
   assign demo_names   = 'Pro Sparring Gloves,Speed Bag Platform,Elite Boxing Shoes,Heavy Bag 100 lb,Compression Shorts,Head Guard Pro,Training Mitts,Skipping Rope Pro' | split: ','
-  assign demo_prices  = '19999,11999,12999,18999,3499,8999,5499,2499' | split: ','
-  assign demo_compare = '24999,0,16999,22999,0,11999,6999,0' | split: ','
-  assign demo_colors  = '4,0,3,2,5,0,2,4' | split: ','
-  assign demo_ratings = '4,5,5,4,5,4,5,5' | split: ','
+  assign demo_prices  = '2999,1999,6299,11899,3499,8999,5499,2499' | split: ','
+  assign demo_compare = '9999,0,8999,16999,0,11999,6999,0' | split: ','
+  assign demo_colors  = '4,0,4,1,5,0,2,4' | split: ','
+  assign demo_ratings = '45,0,50,50,40,0,50,45' | split: ','
   assign demo_reviews = '26,0,7,1,12,0,9,3' | split: ','
   assign demo_svgs    = '1,2,3,4,5,6,1,2' | split: ','
 
@@ -106,6 +106,7 @@
 
               <div class="jfy-card__stars" aria-label="Rating">
                 <span class="jfy-card__stars-icons" aria-hidden="true">★★★★★</span>
+                <span class="jfy-card__stars-count"></span>
               </div>
             </div>
           </article>
@@ -156,11 +157,20 @@
               {% endif %}
 
               {% if dreviews > 0 %}
-                <div class="jfy-card__stars" aria-label="{{ drating }} out of 5 stars, {{ dreviews }} reviews">
+                {% liquid
+                  assign full = drating | divided_by: 10
+                  assign half = 0
+                  assign remainder = drating | modulo: 10
+                  if remainder >= 5
+                    assign half = 1
+                  endif
+                  assign empty = 5 | minus: full | minus: half
+                %}
+                <div class="jfy-card__stars" aria-label="{{ drating | divided_by: 10.0 }} out of 5 stars">
                   <span class="jfy-card__stars-icons" aria-hidden="true">
-                    {%- for i in (1..5) -%}
-                      {%- if i <= drating -%}★{%- else -%}☆{%- endif -%}
-                    {%- endfor -%}
+                    {%- for i in (1..full) -%}★{%- endfor -%}
+                    {%- if half == 1 -%}⯨{%- endif -%}
+                    {%- for i in (1..empty) -%}☆{%- endfor -%}
                   </span>
                   <span class="jfy-card__stars-count">({{ dreviews }})</span>
                 </div>
