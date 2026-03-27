@@ -733,42 +733,189 @@ p:last-child { margin-bottom: 0; }
   .hero__content { padding: 3rem 1.25rem; }
 }
 
-/* ── Category Strip ── */
-.cat-strip {
+/* ── Shop by Category Carousel ── */
+.sbc {
   background: #000;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 2.25rem 0 2rem;
+  overflow: hidden;
 }
-.cat-strip__grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
+
+/* Heading — left-aligned, matches card left edge */
+.sbc__header {
+  padding: 0 0 1.25rem 2rem;
 }
-.cat-strip__tile {
+.sbc__title {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(1.5rem, 2.6vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #fff;
+  line-height: 1;
+}
+
+/* Viewport — no left offset, clips overflow on right */
+.sbc__viewport {
+  overflow: visible;
+  position: relative;
+}
+
+/* Scrollable track — starts at left edge */
+.sbc__track {
   display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  cursor: grab;
+}
+.sbc__track:active { cursor: grabbing; }
+.sbc__track::-webkit-scrollbar { display: none; }
+
+/* Each card — 3 visible + ~7% peek of 4th */
+.sbc__card {
+  flex: 0 0 31%;
+  aspect-ratio: 3 / 4;
+  position: relative;
+  overflow: hidden;
+  scroll-snap-align: start;
+  display: block;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+@media (max-width: 900px) {
+  .sbc__card { flex: 0 0 48%; aspect-ratio: 3 / 4; }
+}
+@media (max-width: 540px) {
+  .sbc__card { flex: 0 0 78%; aspect-ratio: 3 / 4; }
+  .sbc__header { padding-left: 1rem; }
+  .sbc__footer { padding: 1rem 1rem 0; }
+}
+
+/* Image fills card completely */
+.sbc__card-img-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.sbc__card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.55s ease;
+  display: block;
+}
+.sbc__card:hover .sbc__card-img { transform: scale(1.05); }
+
+/* Placeholder when no image is set */
+.sbc__card-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #181818;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #222;
-  border: 1px solid #111;
-  padding: 2rem 1rem;
-  min-height: 110px;
-  text-align: center;
-  transition: background 0.2s;
+  gap: 0.75rem;
+  color: #333;
 }
-.cat-strip__tile:hover { background: #2e2e2e; }
-.cat-strip__label {
+.sbc__card-placeholder svg {
+  width: 52px;
+  height: 52px;
+  stroke: #333;
+}
+.sbc__card-placeholder-text {
   font-family: 'Oswald', sans-serif;
-  font-size: clamp(0.78rem, 1.2vw, 1rem);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #2a2a2a;
+}
+
+/* Gradient overlay — label sits at bottom-left */
+.sbc__card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.78) 0%,
+    rgba(0,0,0,0.12) 40%,
+    transparent 65%
+  );
+  display: flex;
+  align-items: flex-end;
+  padding: 1.25rem 1.1rem 1.35rem;
+  transition: background 0.3s;
+}
+.sbc__card:hover .sbc__card-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.88) 0%,
+    rgba(0,0,0,0.22) 40%,
+    transparent 65%
+  );
+}
+
+/* Label + arrow */
+.sbc__card-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(0.85rem, 1.2vw, 1.05rem);
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #fff;
-  line-height: 1.25;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  line-height: 1;
 }
-@media (max-width: 900px) {
-  .cat-strip__grid { grid-template-columns: repeat(3, 1fr); }
+.sbc__card-arrow {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  transition: transform 0.22s ease;
 }
-@media (max-width: 480px) {
-  .cat-strip__grid { grid-template-columns: repeat(2, 1fr); }
-  .cat-strip__tile { min-height: 80px; padding: 1.25rem 0.75rem; }
+.sbc__card:hover .sbc__card-arrow { transform: translateX(5px); }
+
+/* Footer — dots centered, counter at right */
+.sbc__footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.4rem 2rem 0;
+  position: relative;
+}
+.sbc__segments {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sbc__seg {
+  height: 3px;
+  width: 32px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.18);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.25s, width 0.25s;
+}
+.sbc__seg.is-active {
+  background: #f2c000;
+  width: 52px;
+}
+.sbc__counter {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.38);
+  position: absolute;
+  right: 2rem;
 }
 
 /* ── Section Titles ── */

@@ -16,6 +16,7 @@
         "cat1": {
           "type": "category",
           "settings": {
+            "image": "",
             "collection": "boxing-gloves",
             "label": "BOXING GLOVES",
             "url": ""
@@ -24,46 +25,35 @@
         "cat2": {
           "type": "category",
           "settings": {
-            "collection": "punching-bags",
-            "label": "PUNCHING BAGS",
+            "image": "",
+            "collection": "womens-clothing",
+            "label": "WOMENS CLOTHING",
             "url": ""
           }
         },
         "cat3": {
           "type": "category",
           "settings": {
-            "collection": "footwear",
-            "label": "ALL FOOTWEAR",
+            "image": "",
+            "collection": "punching-bags",
+            "label": "PUNCHING BAGS",
             "url": ""
           }
         },
         "cat4": {
           "type": "category",
           "settings": {
+            "image": "",
             "collection": "mens-clothing",
-            "label": "MENS CLOTHING",
-            "url": ""
-          }
-        },
-        "cat5": {
-          "type": "category",
-          "settings": {
-            "collection": "womens-clothing",
-            "label": "WOMENS CLOTHING",
-            "url": ""
-          }
-        },
-        "cat6": {
-          "type": "category",
-          "settings": {
-            "collection": "training-fitness",
-            "label": "TRAINING & FITNESS",
+            "label": "PROTECTION",
             "url": ""
           }
         }
       },
-      "block_order": ["cat1", "cat2", "cat3", "cat4", "cat5", "cat6"],
-      "settings": {}
+      "block_order": ["cat1", "cat2", "cat3", "cat4"],
+      "settings": {
+        "heading": "SHOP BY CATEGORY"
+      }
     },
     "trending_now": {
       "type": "trending-now",
